@@ -1,4 +1,5 @@
-﻿using TempleOfDoom.Data;
+﻿using System.Numerics;
+using TempleOfDoom.Data;
 using TempleOfDoom.Logic.Services;
 
 namespace TempleOfDoomConsoleApp
@@ -7,52 +8,75 @@ namespace TempleOfDoomConsoleApp
     {
         static void Main(string[] args)
         {
-            // Deursymbolen uitprintbaar maken
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            // Pad dynamisch maken
+            Console.OutputEncoding = System.Text.Encoding.UTF8; // Deursymbolen uitprintbaar maken
             string jsonFilePath = @"C:\Users\Chang Wen Jie\source\repos\deelopdracht-1-24-25-temple-of-doom-mohammedbogatyrev_wenjiechang\TempleOfDoom\TempleOfDoom.Data\Resources\gameData.json";
             _ = new GameDataService();
 
             try
             {
                 GameDataDTO gameData = GameDataService.LoadGameData(jsonFilePath);
-
                 Player newPlayer = GameDataService.CreatePlayer(gameData.player);
-                DisplayPlayerInfo(newPlayer);
 
-                foreach (var room in gameData.rooms)
+                bool gameRunning = true;
+                while (gameRunning && newPlayer.lives > 0)
                 {
-                    Room newRoom = GameDataService.CreateRoom(room);
-                    DisplayRoom(newRoom, gameData.connections);
+                    Room currentRoom = gameData.rooms.FirstOrDefault(r => r.id == newPlayer.startRoomId);
+                    if (currentRoom == null)
+                    {
+                        Console.WriteLine($"Invalid room ID: {newPlayer.startRoomId}");
+                        break;
+                    }
+
+                    DisplayRoom(currentRoom, gameData.connections, newPlayer);
+                    Console.WriteLine(new string(' ', 5) + "Use arrow keys to move, 'Q' to quit:\n" + new string('-', 50) + "\n" + new string('-', 50));
+
+                    var key = Console.ReadKey(true).Key;
+                    string direction = "";
+
+                    switch (key)
+                    {
+                        case ConsoleKey.UpArrow: direction = "up"; break;
+                        case ConsoleKey.DownArrow: direction = "down"; break;
+                        case ConsoleKey.LeftArrow: direction = "left"; break;
+                        case ConsoleKey.RightArrow: direction = "right"; break;
+                        case ConsoleKey.Q: gameRunning = false; break;
+                    }
+
+                    if (!string.IsNullOrEmpty(direction))
+                    {
+                        int previousX = newPlayer.startX;
+                        int previousY = newPlayer.startY;
+                        MovePlayerInRoom(newPlayer, currentRoom, direction);
+
+                        if (IsAtDoor(newPlayer, currentRoom, direction, gameData.connections))
+                        {
+                            if (!MoveToNextRoom(newPlayer, direction, gameData.connections, gameData.rooms))
+                            {
+                                newPlayer.startX = previousX;
+                                newPlayer.startY = previousY;
+                            }
+                        }
+                    }
                 }
 
-                foreach (var connection in gameData.connections)
+                if (newPlayer.lives <= 0)
                 {
-                    Connection newConnection = GameDataService.CreateConnection(connection);
-                    DisplayConnection(newConnection);
-                    
+                    Console.WriteLine("Game Over! You have no lives left.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"GameDataDTO foutmelding: {ex.Message}");
+                Console.WriteLine($"Program.cs Error: {ex.Message}");
             }
         }
 
-        static void DisplayPlayerInfo(Player player)
+        static void DisplayRoom(Room room, Connection[] connections, Player player)
         {
-            Console.WriteLine($"Start Room ID: {player.startRoomId}");
-            Console.WriteLine($"Coordinates: X{player.startX} Y{player.startY}");
-            Console.WriteLine($"Lives: {player.lives}");
-            Console.WriteLine(new string('*', 40));
-        }
+            int leftPadding = 5;
+            Console.Clear();
+            Console.WriteLine("\n" + new string(' ', leftPadding) + "Welcome to the Temple of Doom!\n" + new string('-', 50) + "\n" + new string('-', 50) + "\n\n\n");
 
-        static void DisplayRoom(Room room, Connection[] connections)
-        {
-            Console.WriteLine($"Room ID: {room.id}");
-
-            // Room in 2D array genereren
+            // Kamer in een rooster opslaan
             char[,] grid = new char[room.height, room.width];
             for (int y = 0; y < room.height; y++)
             {
@@ -69,9 +93,11 @@ namespace TempleOfDoomConsoleApp
                 }
             }
 
-            foreach (var item in room.items)
+            if (player.startRoomId == room.id) grid[player.startY, player.startX] = 'X';
+
+            foreach (var item in room.items ?? Enumerable.Empty<Item>())
             {
-                if (item.x >= 0 && item.x < room.width && item.y >= 0 && item.y < room.height)
+                if (item != null && item.x >= 0 && item.x < room.width && item.y >= 0 && item.y < room.height)
                 {
                     grid[item.y, item.x] = item.type switch
                     {
@@ -85,7 +111,6 @@ namespace TempleOfDoomConsoleApp
                 }
             }
 
-            // DEUREN: open on odd & open on stones in room (?), colored: verticaal (| + kleur)/horizontaal (= + kleur), toggle(⊥), closing gate(∩)
             foreach (var connection in connections)
             {
                 if (connection.NORTH == room.id)
@@ -109,14 +134,42 @@ namespace TempleOfDoomConsoleApp
             // 2D array uitprinten
             for (int y = 0; y < room.height; y++)
             {
+                Console.Write(new string(' ', leftPadding));
                 for (int x = 0; x < room.width; x++)
                 {
+                    if (grid[y, x] == '#')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                    }
+                    else if (grid[y, x] == 'X')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
+                    var item = room.items?.FirstOrDefault(i => i.x == x && i.y == y);
+                    if (item != null)
+                    {
+                        Console.ForegroundColor = item.type switch
+                        {
+                            "sankara stone" => ConsoleColor.DarkYellow,
+                            "key" => item.color switch
+                            {
+                                "red" => ConsoleColor.Red,
+                                "green" => ConsoleColor.Green,
+                                _ => ConsoleColor.Gray,
+                            },
+                            _ => ConsoleColor.Gray,
+                        };
+                    }
                     Console.Write(grid[y, x] + " ");
                 }
                 Console.WriteLine();
             }
-
-            Console.WriteLine(new string('-', 40));
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("\n\n" + new string(' ', leftPadding) + "Lives: " + player.lives + "\n\n\n\n" + new string('-', 50) + "\n" + new string('-', 50));
         }
 
         static void PlaceDoors(char[,] grid, Door[] doors, int fixedCoord, int variableLimit, string direction)
@@ -166,20 +219,96 @@ namespace TempleOfDoomConsoleApp
             }
         }
 
-        static void DisplayConnection(Connection connection)
+        static void MovePlayerInRoom(Player player, Room currentRoom, string direction)
         {
-            Console.WriteLine("Connection:");
-            Console.WriteLine($"North: {connection.NORTH}");
-            Console.WriteLine($"South: {connection.SOUTH}");
-            Console.WriteLine($"East: {connection.EAST}");
-            Console.WriteLine($"West: {connection.WEST}");
-            Console.WriteLine("Doors:");
+            int newX = player.startX;
+            int newY = player.startY;
 
-            foreach (var door in connection.doors)
+            switch (direction)
             {
-                Console.WriteLine($"\tType: {door.type}, " + (!string.IsNullOrEmpty(door.color) ? $"Color: {door.color}," : "" + $"No of Stones: {door.no_of_stones}"));
+                case "up": newY--; break;
+                case "down": newY++; break;
+                case "left": newX--; break;
+                case "right": newX++; break;
             }
-            Console.WriteLine(new string('-', 40));
+
+            if (newX >= 0 && newX < currentRoom.width && newY >= 0 && newY < currentRoom.height)
+            {
+                player.startX = newX;
+                player.startY = newY;
+            }
+            else
+            {
+                Console.WriteLine("You can't move in that direction.");
+            }
+        }
+
+        static bool IsAtDoor(Player player, Room currentRoom, string direction, Connection[] connections)
+        {
+            bool atEdge = (direction == "up" && player.startY == 0) ||
+                          (direction == "down" && player.startY == currentRoom.height - 1) ||
+                          (direction == "left" && player.startX == 0) ||
+                          (direction == "right" && player.startX == currentRoom.width - 1);
+
+            if (!atEdge) return false;
+
+            var relevantConnection = connections.FirstOrDefault(c =>
+                (direction == "up" && c.SOUTH == currentRoom.id) ||
+                (direction == "down" && c.NORTH == currentRoom.id) ||
+                (direction == "left" && c.EAST == currentRoom.id) ||
+                (direction == "right" && c.WEST == currentRoom.id));
+
+            return relevantConnection != null;
+        }
+
+        static bool MoveToNextRoom(Player player, string direction, Connection[] connections, Room[] rooms)
+        {
+            var relevantConnections = connections.Where(c =>
+                c.NORTH == player.startRoomId || c.SOUTH == player.startRoomId ||
+                c.WEST == player.startRoomId || c.EAST == player.startRoomId).ToList();
+
+            foreach (var connection in relevantConnections)
+            {
+                Room currentRoom = rooms.First(r => r.id == player.startRoomId);
+                Room nextRoom;
+                switch (direction)
+                {
+                    case "up" when connection.SOUTH == player.startRoomId:
+                        nextRoom = rooms.First(r => r.id == connection.NORTH);
+                        player.startRoomId = connection.NORTH;
+                        player.startY = nextRoom.height - 1;
+                        player.startX = (player.startX - (currentRoom.width / 2)) + (nextRoom.width / 2);
+                        break;
+                    case "down" when connection.NORTH == player.startRoomId:
+                        nextRoom = rooms.First(r => r.id == connection.SOUTH);
+                        player.startRoomId = connection.SOUTH;
+                        player.startY = 0;
+                        player.startX = (player.startX - (currentRoom.width / 2)) + (nextRoom.width / 2);
+                        break;
+                    case "left" when connection.EAST == player.startRoomId:
+                        nextRoom = rooms.First(r => r.id == connection.WEST);
+                        player.startRoomId = connection.WEST;
+                        player.startX = nextRoom.width - 1;
+                        player.startY = (player.startY - (currentRoom.height / 2)) + (nextRoom.height / 2);
+                        break;
+                    case "right" when connection.WEST == player.startRoomId:
+                        nextRoom = rooms.First(r => r.id == connection.EAST);
+                        player.startRoomId = connection.EAST;
+                        player.startX = 0;
+                        player.startY = (player.startY - (currentRoom.height / 2)) + (nextRoom.height / 2);
+                        break;
+                    default:
+                        continue;
+                }
+
+                // Ensure player position is within bounds of the new room
+                player.startX = Math.Max(0, Math.Min(player.startX, nextRoom.width - 1));
+                player.startY = Math.Max(0, Math.Min(player.startY, nextRoom.height - 1));
+                return true;
+            }
+
+            Console.WriteLine("There's no door in that direction.");
+            return false;
         }
     }
 }
