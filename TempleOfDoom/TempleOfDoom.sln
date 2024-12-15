@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempleOfDoom.Logic", "Templ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempleOfDoom.Data", "TempleOfDoom.Data\TempleOfDoom.Data.csproj", "{FF541C2D-BAE6-410B-A62A-096DF9C94A6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempleOfDoomConsoleApp", "TempleOfDoomConsoleApp\TempleOfDoomConsoleApp.csproj", "{348D2E9D-DFF3-4B53-BBA4-0E68F695DA69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempleOfDoom.ConsoleApp", "TempleOfDoom.ConsoleApp\TempleOfDoom.ConsoleApp.csproj", "{348D2E9D-DFF3-4B53-BBA4-0E68F695DA69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
