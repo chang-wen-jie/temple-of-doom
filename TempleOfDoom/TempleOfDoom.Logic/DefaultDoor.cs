@@ -1,4 +1,4 @@
-﻿namespace TempleOfDoom.Logic;
+namespace TempleOfDoom.Logic;
 
 public class DefaultDoor : IDoor
 {
@@ -12,11 +12,8 @@ public class DefaultDoor : IDoor
 
     public DefaultDoor(int id, Direction direction, Room firstRoom, Room secondRoom)
     {
-        Id = id;
-        IsOpen = false;
-        Direction = direction;
-        this.firstRoom = firstRoom;
-        this.secondRoom = secondRoom;
+        IsOpen = true;
+        rooms = new Dictionary<Direction, Room>();
     }
     
     public void Update()
@@ -32,5 +29,15 @@ public class DefaultDoor : IDoor
     public void Close()
     {
         this.IsOpen = false;
+    }
+
+    public void addRoom(Direction direction, Room room)
+    {
+        if (rooms.Count == 2)
+        {
+            throw new InvalidOperationException("Door already has two rooms");
+        }
+        
+        rooms.Add(direction, room);
     }
 }

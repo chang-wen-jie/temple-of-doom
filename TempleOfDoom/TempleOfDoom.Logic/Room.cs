@@ -1,4 +1,4 @@
-﻿namespace TempleOfDoom.Logic;
+namespace TempleOfDoom.Logic;
 
 public class Room
 {

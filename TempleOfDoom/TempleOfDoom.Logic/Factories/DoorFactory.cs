@@ -5,22 +5,29 @@ namespace TempleOfDoom.Logic.Factories;
 
 public class DoorFactory
 {
-    public IDoor createDoor(DoorDto doorDto, Player player)
+    public IDoor createDoor(ConnectionDto connection, Room firstRoom, Room secondRoom, Player player)
     {
-        string type = doorDto.type;
-
-        switch (type)
+        for (int i = 0; i < connection.doors.Length; i++)
         {
-            case "colored":
-                return new ColoredDecorator(new DefaultDoor(), doorDto.color, player);
-            case "toggle":
-                return new ToggleDecorator(new DefaultDoor());
-            case "closing gate":
-                return new ClosingDecorator(new DefaultDoor());
-            case "open on odd":
-                return new OpenOnOddDecorator(new DefaultDoor(), player);
-            case "open on stones in room":
-                return new OpenOnStonesInRoomDecorator(new DefaultDoor(), doorDto.no_of_stones, player);
+            var door = connection.
+
+            switch (door.type)
+            {
+                case "default":
+                    IDoor defaultDoor = new DefaultDoor();
+                    defaultDoor.addRoom(d, firstRoom);
+                    
+                case "colored":
+                    return new ColoredDecorator(new DefaultDoor(doorDto.), doorDto.color, player);
+                case "toggle":
+                    return new ToggleDecorator(new DefaultDoor());
+                case "closing gate":
+                    return new ClosingDecorator(new DefaultDoor());
+                case "open on odd":
+                    return new OpenOnOddDecorator(new DefaultDoor(), player);
+                case "open on stones in room":
+                    return new OpenOnStonesInRoomDecorator(new DefaultDoor(), doorDto.no_of_stones, player);
+            }   
         }
     }
 }

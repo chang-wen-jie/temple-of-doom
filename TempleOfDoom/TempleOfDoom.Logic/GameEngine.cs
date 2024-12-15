@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.Json;
 using TempleOfDoom.Data;
 using TempleOfDoom.Logic.Services;

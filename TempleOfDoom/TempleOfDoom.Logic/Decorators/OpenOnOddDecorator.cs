@@ -3,7 +3,7 @@
 public class OpenOnOddDecorator : IDoor
 {
     private IDoor _wrappee;
-    public bool IsOpen => _wrappee.IsOpen;
+    public bool IsOpen { get; }
     public Direction Direction => _wrappee.Direction;
     public Room firstRoom => _wrappee.firstRoom;
     public Room secondRoom => _wrappee.secondRoom;
@@ -12,6 +12,7 @@ public class OpenOnOddDecorator : IDoor
     public OpenOnOddDecorator(IDoor wrappee, Player player)
     {
         this._wrappee = wrappee;
+        this.IsOpen = false;
         this.Player = player;
     }
 

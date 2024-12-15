@@ -5,7 +5,7 @@ namespace TempleOfDoom.Logic.Decorators;
 public class ColoredDecorator : IDoor
 {
     private IDoor _wrappee;
-    public bool IsOpen => _wrappee.IsOpen;
+    public bool IsOpen { get; }
     public Direction Direction => _wrappee.Direction;
     public Room firstRoom => _wrappee.firstRoom;
     public Room secondRoom => _wrappee.secondRoom;
@@ -15,6 +15,7 @@ public class ColoredDecorator : IDoor
     public ColoredDecorator(IDoor wrappee, string color, Player player)
     {
         this._wrappee = wrappee;
+        this.IsOpen = false;
         this._color = Enum.Parse<Color>(color, true);
         this._player = player;
     }

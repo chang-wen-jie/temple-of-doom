@@ -3,7 +3,7 @@
 public class ToggleDecorator : IDoor
 {
     private IDoor _wrappee;
-    public bool IsOpen => _wrappee.IsOpen;
+    public bool IsOpen { get; }
     public Direction Direction => _wrappee.Direction;
     public Room firstRoom => _wrappee.firstRoom;
     public Room secondRoom => _wrappee.secondRoom;
@@ -11,6 +11,7 @@ public class ToggleDecorator : IDoor
     public ToggleDecorator(IDoor wrappee)
     {
         this._wrappee = wrappee;
+        this.IsOpen = false;
     }
     
     public void Open()

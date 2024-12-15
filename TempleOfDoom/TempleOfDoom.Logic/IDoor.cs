@@ -3,10 +3,10 @@ namespace TempleOfDoom.Logic;
 public interface IDoor : IObserver
 {
     bool IsOpen { get; }
-    Direction Direction { get; }
-    Room firstRoom { get; }
-    Room secondRoom { get; }
+    public Dictionary<Direction, Room> rooms { get; }
     
     void Open();
     void Close();
+    
+    void addRoom(Direction direction, Room room);
 }

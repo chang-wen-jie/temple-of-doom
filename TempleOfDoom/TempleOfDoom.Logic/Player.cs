@@ -202,6 +202,11 @@ public class Player
         
         return false;
     }
+    
+    public int getNumberOfStones()
+    {
+        return items.Count(item => item is SankaraStone);
+    }
 
     public void SubtractLives(int amount)
     {
