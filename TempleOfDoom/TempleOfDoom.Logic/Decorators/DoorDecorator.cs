@@ -3,6 +3,7 @@
 public abstract class DoorDecorator : IDoor
 {
     public int Id { get; }
+    public string Type { get; }
     public bool IsOpen { get; }
     protected IDoor Wrappee;
     

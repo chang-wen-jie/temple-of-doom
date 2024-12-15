@@ -5,7 +5,7 @@ namespace TempleOfDoom.Logic;
 public class Key : IItem
 {
     public bool IsLootable { get; set; }
-    public Color Color { get; private set; }
+    public Color Color { get; set; }
     
     public Key(string color)
     {
