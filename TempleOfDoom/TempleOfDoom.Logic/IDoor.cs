@@ -2,7 +2,6 @@
 
 public interface IDoor : IObserver
 {
-    int Id { get; }
     bool IsOpen { get; }
     Direction Direction { get; }
     Room firstRoom { get; }

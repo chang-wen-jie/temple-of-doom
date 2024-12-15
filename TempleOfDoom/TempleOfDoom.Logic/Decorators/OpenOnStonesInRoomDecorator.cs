@@ -3,7 +3,6 @@
 public class OpenOnStonesInRoomDecorator : IDoor
 {
     private IDoor _wrappee;
-    public int Id => _wrappee.Id;
     public bool IsOpen => _wrappee.IsOpen;
     public Direction Direction => _wrappee.Direction;
     public Room firstRoom => _wrappee.firstRoom;
