@@ -2,32 +2,38 @@
 
 namespace TempleOfDoom.Logic.Decorators;
 
-public class ColoredDecorator : DoorDecorator
+public class ColoredDecorator : IDoor
 {
+    private IDoor _wrappee;
+    public bool IsOpen => _wrappee.IsOpen;
+    public Direction Direction => _wrappee.Direction;
+    public Room firstRoom => _wrappee.firstRoom;
+    public Room secondRoom => _wrappee.secondRoom;
     private Color _color;
     private Player _player;
     
-    public ColoredDecorator(IDoor wrappee, string color, Player player) : base(wrappee)
+    public ColoredDecorator(IDoor wrappee, string color, Player player)
     {
+        this._wrappee = wrappee;
         this._color = Enum.Parse<Color>(color, true);
         this._player = player;
     }
-
-    public override void Update()
-    {
-        throw new NotImplementedException();
-    }
     
-    public new void Open()
+    public void Open()
     {
         if (_player.hasRequiredKey(this._color))
         {
-            base.Open();
+            _wrappee.Open();
         }
     }
     
-    public new void Close()
+    public void Close()
     {
-        base.Close();
+        _wrappee.Close();
+    }
+    
+    public void Update()
+    {
+        throw new NotImplementedException();
     }
 }

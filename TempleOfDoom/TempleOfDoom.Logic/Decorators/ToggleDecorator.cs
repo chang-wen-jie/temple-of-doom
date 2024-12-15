@@ -1,20 +1,37 @@
 ﻿namespace TempleOfDoom.Logic.Decorators;
 
-public class ToggleDecorator : DoorDecorator
+public class ToggleDecorator : IDoor
 {
-    public ToggleDecorator(IDoor wrappee) : base(wrappee)
+    private IDoor _wrappee;
+    public bool IsOpen => _wrappee.IsOpen;
+    public Direction Direction => _wrappee.Direction;
+    public Room firstRoom => _wrappee.firstRoom;
+    public Room secondRoom => _wrappee.secondRoom;
+
+    public ToggleDecorator(IDoor wrappee)
     {
+        this._wrappee = wrappee;
+    }
+    
+    public void Open()
+    {
+        throw new NotImplementedException();
     }
 
-    public override void Update()
+    public void Close()
     {
-        if (base.IsOpen)
+        throw new NotImplementedException();
+    }
+
+    public void Update()
+    {
+        if (_wrappee.IsOpen)
         {
-            base.Close();
+            _wrappee.Close();
         }
         else
         {
-            base.Open();
+            _wrappee.Open();
         }
     }
 }

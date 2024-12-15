@@ -5,11 +5,18 @@ public class DefaultDoor : IDoor
     public int Id { get; }
     public string Type { get; }
     public bool IsOpen { get; set; }
+    public Direction Direction { get; }
+    public Room firstRoom { get; }
+    public Room secondRoom { get; }
 
 
-    public DefaultDoor()
+    public DefaultDoor(int id, Direction direction, Room firstRoom, Room secondRoom)
     {
+        Id = id;
         IsOpen = false;
+        Direction = direction;
+        this.firstRoom = firstRoom;
+        this.secondRoom = secondRoom;
     }
     
     public void Update()
