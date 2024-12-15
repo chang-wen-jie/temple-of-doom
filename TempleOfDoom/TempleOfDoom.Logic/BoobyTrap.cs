@@ -1,16 +1,16 @@
-﻿namespace TempleOfDoom.Logic;
+﻿//namespace TempleOfDoom.Logic;
 
-public class BoobyTrap : IItem
-{
-    public bool IsLootable { get; set; }
+//public class BoobyTrap : IItem
+//{
+//    public bool IsLootable { get; set; }
     
-    public BoobyTrap()
-    {
-        IsLootable = false;
-    }
+//    public BoobyTrap()
+//    {
+//        IsLootable = false;
+//    }
     
-    public void Interact()
-    {
-        throw new NotImplementedException();
-    }
-}
+//    public void Interact()
+//    {
+//        throw new NotImplementedException();
+//    }
+//}

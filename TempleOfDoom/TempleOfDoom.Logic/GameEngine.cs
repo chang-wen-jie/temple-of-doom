@@ -7,13 +7,12 @@ namespace TempleOfDoom.Logic;
 
 public class GameEngine
 {
-    static readonly List<Key> collectedKeys = new List<Key>();
-    static List<IItem> collectedSankaraStones = new List<IItem>();
+    static readonly List<ItemDto> collectedKeys = new List<ItemDto>();
+    static List<ItemDto> collectedSankaraStones = new List<ItemDto>();
 
-    public void run()
+    public static void Run()
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        
         string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "gameData.json");
         _ = new GameDataService();
             
@@ -25,15 +24,15 @@ public class GameEngine
         try
         {
             GameDataDTO gameData = GameDataService.LoadGameData(jsonFilePath);
-            Player newPlayer = GameDataService.CreatePlayer(gameData.player);
+            PlayerDto newPlayer = GameDataService.CreatePlayer(gameData.player);
 
             bool gameRunning = true;
             while (gameRunning && newPlayer.lives > 0 && collectedSankaraStones.Count < 5)
             {
-                Room currentRoom = gameData.rooms.FirstOrDefault(r => r.id == newPlayer.roomId);
+                RoomDto currentRoom = gameData.rooms.FirstOrDefault(r => r.id == newPlayer.startRoomId);
                 if (currentRoom == null)
                 {
-                    Console.WriteLine($"Invalid room ID: {newPlayer.roomId}");
+                    Console.WriteLine($"Invalid room ID: {newPlayer.startRoomId}");
                     break;
                 }
 
@@ -53,16 +52,16 @@ public class GameEngine
 
                 if (!string.IsNullOrEmpty(direction))
                 {
-                    int previousX = newPlayer.xPosition;
-                    int previousY = newPlayer.yPosition;
+                    int previousX = newPlayer.startX;
+                    int previousY = newPlayer.startY;
                     MovePlayerInRoom(newPlayer, currentRoom, direction);
 
                     if (IsAtDoor(newPlayer, currentRoom, direction, gameData.connections))
                     {
                         if (!MoveToNextRoom(newPlayer, direction, gameData.connections, gameData.rooms))
                         {
-                            newPlayer.xPosition = previousX;
-                            newPlayer.yPosition = previousY;
+                            newPlayer.startX = previousX;
+                            newPlayer.startY = previousY;
                         }
                     }
                 }
@@ -83,7 +82,7 @@ public class GameEngine
         }
     }
 
-    static void DisplayRoom(Room room, ConnectionDto[] connections, Player player)
+    static void DisplayRoom(RoomDto room, ConnectionDto[] connections, PlayerDto player)
     {
         int leftPadding = 5;
         Console.Clear();
@@ -100,27 +99,27 @@ public class GameEngine
             }
         }
 
-        foreach (var item in room.items ?? Enumerable.Empty<IItem>())
+        foreach (var item in room.items ?? Enumerable.Empty<ItemDto>())
         {
             if (item != null && item.x >= 0 && item.x < room.width && item.y >= 0 && item.y < room.height)
             {
-                grid[item.y, item.x] = item switch
+                grid[item.y, item.x] = item.type switch
                 {
-                    SankaraStone => 'S',
-                    Key key => 'K',
-                    PressurePlate => 'T',
-                    BoobyTrap => 'O',
-                    DisappearingBoobyTrap => '@',
+                    "sankara stone" => 'S',
+                    "key" => 'K',
+                    "pressure plate" => 'T',
+                    "boobytrap" => 'O',
+                    "disappearing boobytrap" => '@',
                     _ => '.',
                 };
             }
         }
 
-        if (player.roomId == room.Id) grid[player.yPosition, player.xPosition] = 'X';
+        if (player.startRoomId == room.id) grid[player.startY, player.startX] = 'X';
 
         foreach (var connection in connections)
         {
-            switch (room.Id)
+            switch (room.id)
             {
                 case var id when id == connection.SOUTH:
                     PlaceDoors(grid, connection.doors, 0, room.width, "horizontal");
@@ -162,16 +161,15 @@ public class GameEngine
                     Console.ForegroundColor = ConsoleColor.Gray;
                 }
                 var item = room.items?.FirstOrDefault(i => i.x == x && i.y == y);
-
                 if (item != null)
                 {
-                    Console.ForegroundColor = item switch
+                    Console.ForegroundColor = item.type switch
                     {
-                        SankaraStone => ConsoleColor.DarkYellow,
-                        Key key => key.Color switch
+                        "sankara stone" => ConsoleColor.DarkYellow,
+                        "key" => item.color switch
                         {
-                            Enums.Color.Red => ConsoleColor.Red,
-                            Enums.Color.Green => ConsoleColor.Green,
+                            "red" => ConsoleColor.Red,
+                            "green" => ConsoleColor.Green,
                             _ => ConsoleColor.Gray,
                         },
                         _ => ConsoleColor.Gray,
@@ -186,16 +184,16 @@ public class GameEngine
         Console.WriteLine("\n\n\n" + new string('-', 50) + "\n" + new string('-', 50) + "\n" + new string(' ', leftPadding) + "Inventory");
         foreach (var key in collectedKeys)
         {
-            Console.WriteLine(new string(' ', leftPadding) + key.Color + " key");
+            Console.WriteLine(new string(' ', leftPadding) + key.color + " key");
         }
         Console.WriteLine(new string('-', 50) + "\n" + new string('-', 50));
     }
 
-    static void PlaceDoors(char[,] grid, IDoor[] doors, int fixedCoord, int variableLimit, string direction)
+    static void PlaceDoors(char[,] grid, DoorDto[] doors, int fixedCoord, int variableLimit, string direction)
     {
         int middle = variableLimit / 2;
 
-        char doorSymbol = doors?.FirstOrDefault()?.Type switch
+        char doorSymbol = doors?.FirstOrDefault()?.type switch
         {
             "colored" => direction == "horizontal" ? '=' : '|',
             "toggle" => '⊥',
@@ -215,10 +213,10 @@ public class GameEngine
         }
     }
 
-    static void MovePlayerInRoom(Player player, Room currentRoom, string direction)
+    static void MovePlayerInRoom(PlayerDto player, RoomDto currentRoom, string direction)
     {
-        int newX = player.xPosition;
-        int newY = player.yPosition;
+        int newX = player.startX;
+        int newY = player.startY;
 
         switch (direction)
         {
@@ -230,63 +228,63 @@ public class GameEngine
 
         if (newX >= 0 && newX < currentRoom.width && newY >= 0 && newY < currentRoom.height)
         {
-            player.xPosition = newX;
-            player.yPosition = newY;
+            player.startX = newX;
+            player.startY = newY;
             HandleItemInteraction(player, currentRoom);
         }
     }
 
-    static void HandleItemInteraction(Player player, Room currentRoom)
+    static void HandleItemInteraction(PlayerDto player, RoomDto currentRoom)
     {
-        var item = currentRoom.items?.FirstOrDefault(i => i.x == player.xPosition && i.y == player.yPosition);
+        var item = currentRoom.items?.FirstOrDefault(i => i.x == player.startX && i.y == player.startY);
         if (item != null)
         {
-            switch (item)
+            switch (item.type)
             {
-                case BoobyTrap _:
-                case DisappearingBoobyTrap _:
-                    player.SubtractLives(1);
-                    if (item is DisappearingBoobyTrap) RemoveItemFromRoom(currentRoom, item);
+                case "boobytrap":
+                case "disappearing boobytrap":
+                    player.lives--;
+                    if (item.type == "disappearing boobytrap") RemoveItemFromRoom(currentRoom, item);
                     break;
-                case Key key:
-                    collectedKeys.Add(key);
-                    RemoveItemFromRoom(currentRoom, key);
+                case "key":
+                    collectedKeys.Add(item);
+                    RemoveItemFromRoom(currentRoom, item);
                     break;
-                case SankaraStone stone:
-                    collectedSankaraStones.Add(stone);
-                    RemoveItemFromRoom(currentRoom, stone);
+                case "sankara stone":
+                    collectedSankaraStones.Add(item);
+                    RemoveItemFromRoom(currentRoom, item);
                     break;
 
             }
         }
     }
 
-    static void RemoveItemFromRoom(Room room, IItem item)
+    static void RemoveItemFromRoom(RoomDto room, ItemDto item)
     {
-        room.items.Remove(item);
+        room.items = room.items.Where(i => i != item).ToArray();
     }
 
-    static bool IsAtDoor(Player player, Room currentRoom, string direction, ConnectionDto[] connections)
+    static bool IsAtDoor(PlayerDto player, RoomDto currentRoom, string direction, ConnectionDto[] connections)
     {
-        bool atEdge = (direction == "up" && player.yPosition == 0) ||
-                      (direction == "down" && player.yPosition == currentRoom.height - 1) ||
-                      (direction == "left" && player.xPosition == 0) ||
-                      (direction == "right" && player.xPosition == currentRoom.width - 1);
+        bool atEdge = (direction == "up" && player.startY == 0) ||
+                          (direction == "down" && player.startY == currentRoom.height - 1) ||
+                          (direction == "left" && player.startX == 0) ||
+                          (direction == "right" && player.startX == currentRoom.width - 1);
 
         if (!atEdge) return false;
 
         var relevantConnection = connections.FirstOrDefault(c =>
-            (direction == "up" && c.SOUTH == currentRoom.Id) ||
-            (direction == "down" && c.NORTH == currentRoom.Id) ||
-            (direction == "left" && c.EAST == currentRoom.Id) ||
-            (direction == "right" && c.WEST == currentRoom.Id));
+            (direction == "up" && c.SOUTH == currentRoom.id) ||
+            (direction == "down" && c.NORTH == currentRoom.id) ||
+            (direction == "left" && c.EAST == currentRoom.id) ||
+            (direction == "right" && c.WEST == currentRoom.id));
 
         if (relevantConnection != null)
         {
             var coloredDoor = relevantConnection.doors.FirstOrDefault(d => d.type == "colored");
             if (coloredDoor != null)
             {
-                bool hasMatchingKey = collectedKeys.Any(k => k.Color == coloredDoor.color);
+                bool hasMatchingKey = collectedKeys.Any(k => k.color == coloredDoor.color);
                 if (!hasMatchingKey) return false;
             }
 
@@ -297,57 +295,57 @@ public class GameEngine
         return relevantConnection != null;
     }
 
-    static bool MoveToNextRoom(Player player, string direction, ConnectionDto[] connections, Room[] rooms)
+    static bool MoveToNextRoom(PlayerDto player, string direction, ConnectionDto[] connections, RoomDto[] rooms)
     {
         var relevantConnections = connections.Where(c =>
-            c.NORTH == player.roomId || c.SOUTH == player.roomId ||
-            c.WEST == player.roomId || c.EAST == player.roomId).ToList();
+                c.NORTH == player.startRoomId || c.SOUTH == player.startRoomId ||
+                c.WEST == player.startRoomId || c.EAST == player.startRoomId).ToList();
 
         foreach (var connection in relevantConnections)
         {
             var coloredDoor = connection.doors.FirstOrDefault(d => d.type == "colored");
-            if (coloredDoor != null && !collectedKeys.Any(k => k.Color == coloredDoor.color)) return false;
+            if (coloredDoor != null && !collectedKeys.Any(k => k.color == coloredDoor.color)) return false;
 
-            Room currentRoom = rooms.First(r => r.Id == player.roomId);
-            Room nextRoom;
+            RoomDto currentRoom = rooms.First(r => r.id == player.startRoomId);
+            RoomDto nextRoom;
             switch (direction)
             {
-                case "up" when connection.SOUTH == player.roomId:
-                    nextRoom = rooms.First(r => r.Id == connection.NORTH);
-                    MarkDoorAsClosed(connection.doors, "closing gate");
-                    player.roomId = connection.NORTH;
-                    player.yPosition = nextRoom.height - 1;
-                    player.xPosition = (player.xPosition - (currentRoom.width / 2)) + (nextRoom.width / 2);
+                case "up" when connection.SOUTH == player.startRoomId:
+                    nextRoom = rooms.First(r => r.id == connection.NORTH);
+                    MarkDoorAsClosed(connection.doors, "closing gate"); // Close the gate permanently
+                    player.startRoomId = connection.NORTH;
+                    player.startY = nextRoom.height - 1;
+                    player.startX = (player.startX - (currentRoom.width / 2)) + (nextRoom.width / 2);
                     break;
-                case "down" when connection.NORTH == player.roomId:
-                    nextRoom = rooms.First(r => r.Id == connection.SOUTH);
-                    MarkDoorAsClosed(connection.doors, "closing gate");
+                case "down" when connection.NORTH == player.startRoomId:
+                    nextRoom = rooms.First(r => r.id == connection.SOUTH);
+                    MarkDoorAsClosed(connection.doors, "closing gate"); // Close the gate permanently
 
-                    player.roomId = connection.SOUTH;
-                    player.yPosition = 0;
-                    player.xPosition = (player.xPosition - (currentRoom.width / 2)) + (nextRoom.width / 2);
+                    player.startRoomId = connection.SOUTH;
+                    player.startY = 0;
+                    player.startX = (player.startX - (currentRoom.width / 2)) + (nextRoom.width / 2);
                     break;
-                case "left" when connection.EAST == player.roomId:
-                    nextRoom = rooms.First(r => r.Id == connection.WEST);
-                    MarkDoorAsClosed(connection.doors, "closing gate");
-                    player.roomId = connection.WEST;
-                    player.xPosition = nextRoom.width - 1;
-                    player.yPosition = (player.yPosition - (currentRoom.height / 2)) + (nextRoom.height / 2);
+                case "left" when connection.EAST == player.startRoomId:
+                    nextRoom = rooms.First(r => r.id == connection.WEST);
+                    MarkDoorAsClosed(connection.doors, "closing gate"); // Close the gate permanently
+                    player.startRoomId = connection.WEST;
+                    player.startX = nextRoom.width - 1;
+                    player.startY = (player.startY - (currentRoom.height / 2)) + (nextRoom.height / 2);
                     break;
-                case "right" when connection.WEST == player.roomId:
-                    nextRoom = rooms.First(r => r.Id == connection.EAST);
-                    MarkDoorAsClosed(connection.doors, "closing gate");
-                    player.roomId = connection.EAST;
-                    player.xPosition = 0;
-                    player.yPosition = (player.yPosition - (currentRoom.height / 2)) + (nextRoom.height / 2);
+                case "right" when connection.WEST == player.startRoomId:
+                    nextRoom = rooms.First(r => r.id == connection.EAST);
+                    MarkDoorAsClosed(connection.doors, "closing gate"); // Close the gate permanently
+                    player.startRoomId = connection.EAST;
+                    player.startX = 0;
+                    player.startY = (player.startY - (currentRoom.height / 2)) + (nextRoom.height / 2);
                     break;
                 default:
                     continue;
             }
 
             // Voorkom dat speler buiten de grenzen van de volgende kamer komt
-            player.xPosition = Math.Max(0, Math.Min(player.xPosition, nextRoom.width - 1));
-            player.yPosition = Math.Max(0, Math.Min(player.yPosition, nextRoom.height - 1));
+            player.startX = Math.Max(0, Math.Min(player.startX, nextRoom.width - 1));
+            player.startY = Math.Max(0, Math.Min(player.startY, nextRoom.height - 1));
             return true;
         }
 
@@ -355,9 +353,9 @@ public class GameEngine
     }
 
     // voor de closing gate
-    static void MarkDoorAsClosed(IDoor[] doors, string doorType)
+    static void MarkDoorAsClosed(DoorDto[] doors, string doorType)
     {
-        var doorToClose = doors.FirstOrDefault(d => d.Type == doorType);
+        var doorToClose = doors.FirstOrDefault(d => d.type == doorType);
         if (doorToClose != null)
         {
             doorToClose.isClosedPermanently = true; // Set the door's state to closed permanently

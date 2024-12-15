@@ -12,26 +12,26 @@ namespace TempleOfDoom.Logic.Services
             return gameData;
         }
 
-        public static Player CreatePlayer(PlayerDto player)
+        public static PlayerDto CreatePlayer(PlayerDto player)
         {
-            return new Player
+            return new PlayerDto
             {
-                roomId = player.startRoomId,
-                xPosition = player.startX,
-                yPosition = player.startY,
+                startRoomId = player.startRoomId,
+                startX = player.startX,
+                startY = player.startY,
                 lives = player.lives,
             };
         }
 
-        public static Room CreateRoom(RoomDto roomDto)
+        public static RoomDto CreateRoom(RoomDto room)
         {
-            return new Room
+            return new RoomDto
             {
-                Id = roomDto.id,
-                Type = roomDto.type,
-                width = roomDto.width,
-                height = roomDto.height,
-                items = (roomDto.items ?? []).Select(i => new ItemDto
+                id = room.id,
+                type = room.type,
+                width = room.width,
+                height = room.height,
+                items = (room.items ?? []).Select(i => new ItemDto
                 {
                     type = i.type,
                     damage = i.damage,
@@ -39,14 +39,6 @@ namespace TempleOfDoom.Logic.Services
                     y = i.y,
                     color = i.color,
                 }).ToArray(),
-            };
-        }
-
-        public static ItemDto CreateItem(ItemDto itemDto)
-        {
-            return new ItemDto
-            {
-
             };
         }
 
@@ -62,11 +54,11 @@ namespace TempleOfDoom.Logic.Services
             };
         }
 
-        public static IDoor CreateDoor(DoorDto doorDTO)
+        public static DoorDto CreateDoor(DoorDto doorDTO)
         {
-            return new IDoor
+            return new DoorDto
             {
-                Type = doorDTO.Type,
+                type = doorDTO.type,
                 color = doorDTO.color,
                 no_of_stones = doorDTO.no_of_stones,
             };
