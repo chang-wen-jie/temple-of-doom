@@ -3,6 +3,7 @@
 public class DefaultDoor : IDoor
 {
     public int Id { get; }
+    public string Type { get; }
     public bool IsOpen { get; set; }
     public Direction Direction { get; }
     public Room firstRoom { get; }

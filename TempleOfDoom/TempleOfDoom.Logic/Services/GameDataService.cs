@@ -12,26 +12,26 @@ namespace TempleOfDoom.Logic.Services
             return gameData;
         }
 
-        public static Player CreatePlayer(Player player)
+        public static Player CreatePlayer(PlayerDto player)
         {
             return new Player
             {
-                startRoomId = player.startRoomId,
-                startX = player.startX,
-                startY = player.startY,
+                roomId = player.startRoomId,
+                xPosition = player.startX,
+                yPosition = player.startY,
                 lives = player.lives,
             };
         }
 
-        public static Room CreateRoom(Room room)
+        public static Room CreateRoom(RoomDto roomDto)
         {
             return new Room
             {
-                id = room.id,
-                type = room.type,
-                width = room.width,
-                height = room.height,
-                items = (room.items ?? []).Select(i => new Item
+                Id = roomDto.id,
+                Type = roomDto.type,
+                width = roomDto.width,
+                height = roomDto.height,
+                items = (roomDto.items ?? []).Select(i => new ItemDto
                 {
                     type = i.type,
                     damage = i.damage,
@@ -42,9 +42,17 @@ namespace TempleOfDoom.Logic.Services
             };
         }
 
-        public static Connection CreateConnection(Connection connectionDTO)
+        public static ItemDto CreateItem(ItemDto itemDto)
         {
-            return new Connection
+            return new ItemDto
+            {
+
+            };
+        }
+
+        public static ConnectionDto CreateConnection(ConnectionDto connectionDTO)
+        {
+            return new ConnectionDto
             {
                 NORTH = connectionDTO.NORTH,
                 SOUTH = connectionDTO.SOUTH,
@@ -54,11 +62,11 @@ namespace TempleOfDoom.Logic.Services
             };
         }
 
-        public static Door CreateDoor(Door doorDTO)
+        public static IDoor CreateDoor(DoorDto doorDTO)
         {
-            return new Door
+            return new IDoor
             {
-                type = doorDTO.type,
+                Type = doorDTO.Type,
                 color = doorDTO.color,
                 no_of_stones = doorDTO.no_of_stones,
             };
