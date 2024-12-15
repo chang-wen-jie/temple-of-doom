@@ -47,5 +47,6 @@
         public string type { get; set; }
         public string color { get; set; }
         public int no_of_stones { get; set; }
+        public bool isClosedPermanently { get; set; }
     }
 }
