@@ -1,14 +1,18 @@
-﻿using TempleOfDoom.Logic;
+﻿using TempleOfDoom.Data;
+using TempleOfDoom.Logic;
+using TempleOfDoom.Logic.Models;
 
-namespace TempleOfDoomConsoleApp
+namespace TempleOfDoom.ConsoleApp;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-
-        static void Main(string[] args)
-        {
-            GameEngine engine = new GameEngine();
-            GameEngine.Run();
-        }        
+        var levelLoader = new LevelLoader();
+        var levelMapper = new LevelMapper();
+        
+        RootObject rootObject = levelLoader.LoadLevel("GameData.json");
+        Level level = levelMapper.MapToLevel(rootObject);
+        Console.WriteLine("Done");
     }
 }
