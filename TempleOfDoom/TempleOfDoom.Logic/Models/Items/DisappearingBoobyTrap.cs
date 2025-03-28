@@ -9,11 +9,11 @@ public class DisappearingBoobyTrap : IItem
     public bool IsLootable => false;
     
     // TODO: Use Observer pattern to notify the game that the item should be removed instead of current implementation
-    public bool shouldBeRemoved { get; private set; }
+    public bool ShouldBeRemoved { get; private set; }
     
     public void Interact(Player player)
     {
-        player.decreaseLives(Damage);
-        shouldBeRemoved = true;
+        player.DecreaseLives(Damage);
+        ShouldBeRemoved = true;
     }
 }

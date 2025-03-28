@@ -13,6 +13,7 @@
         <None Include="..\TempleOfDoom.Data\Resources\GameData.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>  
+        <ProjectReference Include="..\TempleOfDoom.UI\TempleOfDoom.UI.csproj" />  
     </ItemGroup>
 
 </Project>

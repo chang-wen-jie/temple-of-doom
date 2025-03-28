@@ -10,6 +10,6 @@ public class BoobyTrap : IItem
     
     public void Interact(Player player)
     {
-        player.decreaseLives(Damage);
+        player.DecreaseLives(Damage);
     }
 }
