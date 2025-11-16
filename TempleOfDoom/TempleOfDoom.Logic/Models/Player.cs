@@ -23,33 +23,21 @@ namespace TempleOfDoom.Logic.Models
             }
         }
         
-        public IItem RemoveItem(IItem item)
-        {
-            return Items.Remove(item) ? item : null;
-        }
-        
-        public bool HasItem(IItem item)
-        {
-            return Items.Contains(item);
-        }
-        
         public IEnumerable<IItem> GetItems()
         {
             return Items.AsReadOnly();
         }
         
-        public bool MovePlayer(Room currentRoom, string direction)
+        public void Move(Room currentRoom, string direction)
         {
             var (newX, newY) = CalculateNewPosition(direction);
 
-            if (!IsValidMove(currentRoom, newX, newY)) 
-                return false;
+            if (!currentRoom.IsPositionValid(newX, newY)) return;
 
             StartXPos = newX;
             StartYPos = newY;
-            
-            HandleItemInteraction(currentRoom);
-            return true;
+    
+            currentRoom.HandlePlayerEntry(this);
         }
 
         private (int newX, int newY) CalculateNewPosition(string direction)
@@ -63,25 +51,12 @@ namespace TempleOfDoom.Logic.Models
                 _ => (StartXPos, StartYPos)
             };
         }
-
-        private static bool IsValidMove(Room currentRoom, int newX, int newY)
+        
+        public void SetRoom(int roomId, int x, int y)
         {
-            return newX >= 0 && newX < currentRoom.Width && 
-                   newY >= 0 && newY < currentRoom.Height;
-        }
-
-        private void HandleItemInteraction(Room currentRoom)
-        {
-            var item = currentRoom.Items?
-                .FirstOrDefault(i => i.XPos == StartXPos && i.YPos == StartYPos);
-
-            if (item == null) return;
-            item.Interact(this);
-
-            if (item is DisappearingBoobyTrap { ShouldBeRemoved: true } disappearingTrap)
-            {
-                currentRoom.Items?.Remove(disappearingTrap);
-            }
+            StartRoomId = roomId;
+            StartXPos = x;
+            StartYPos = y;
         }
     }
 }

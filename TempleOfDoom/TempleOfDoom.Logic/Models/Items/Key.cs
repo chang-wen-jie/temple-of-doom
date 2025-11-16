@@ -11,6 +11,6 @@ public class Key : IItem
     
     public void Interact(Player player)
     {
-        throw new NotImplementedException();
+        player.AddItem(this);
     }
 }

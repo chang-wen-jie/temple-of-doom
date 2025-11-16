@@ -6,7 +6,7 @@ public class JsonLevelLoadStrategy : ILevelLoadStrategy
 {
     public RootObject LoadLevel(string filePath)
     {
-        string json = File.ReadAllText(filePath);
+        var json = File.ReadAllText(filePath);
         try
         {
             return JsonSerializer.Deserialize<RootObject>(json) ?? throw new Exception("Kan GameData.json niet inlezen");

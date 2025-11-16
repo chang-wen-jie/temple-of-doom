@@ -24,27 +24,27 @@ namespace TempleOfDoom.ConsoleApp
         {
             var levelLoader = new LevelLoader();
             var levelMapper = new LevelMapper();
-            var roomRenderer = new RoomRenderer();
             
             var rootObject = levelLoader.LoadLevel("GameData.json");
             var level = levelMapper.MapToLevel(rootObject);
             
-            var startRoom = level.Rooms.First(r => r.Id == level.Player.StartRoomId);
+            var gameManager = new GameManager(level);
             var player = level.Player;
             
-            var gameRunning = true;
             var collectedSankaraStones = 0;
 
-            while (gameRunning && player.Lives > 0 && collectedSankaraStones < 5)
+            while (player.Lives > 0 && collectedSankaraStones < 5)
             {
-                roomRenderer.DisplayRoom(startRoom, player);
+                var currentRoom = level.Rooms.First(r => r.Id == player.StartRoomId);
+                
+                RoomRenderer.RenderRoom(currentRoom, player);
 
                 var key = Console.ReadKey(true).Key;
                 var direction = MapKeyToDirection(key);
 
                 if (string.IsNullOrEmpty(direction)) continue;
                 
-                player.MovePlayer(startRoom, direction);
+                gameManager.HandlePlayerInput(direction);
 
                 collectedSankaraStones = player.GetItems()
                     .OfType<SankaraStone>()
@@ -68,13 +68,12 @@ namespace TempleOfDoom.ConsoleApp
 
         private static void DisplayGameResult(int collectedSankaraStones)
         {
-            Console.Clear();
             var resultMessage = collectedSankaraStones == 5 
-                ? "YOU WON" 
+                ? "GAME CLEARED" 
                 : "GAME OVER";
 
             Console.WriteLine(
-                new string('*', 50) + "\n" + 
+                "\n" + new string('*', 50) + "\n" + 
                 new string(' ', 5) + resultMessage + "\n" + 
                 new string('*', 50)
             );
