@@ -3,6 +3,7 @@ using TempleOfDoom.Data;
 using TempleOfDoom.Logic;
 using TempleOfDoom.Logic.Models.Items;
 using TempleOfDoom.UI.Rendering;
+using LevelLoader = TempleOfDoom.Logic.LevelLoader;
 
 namespace TempleOfDoom.ConsoleApp
 {
@@ -22,8 +23,8 @@ namespace TempleOfDoom.ConsoleApp
 
         private static void RunGame()
         {
-            var levelLoader = new LevelLoader();
-            var levelMapper = new LevelMapper();
+            var levelLoader = new Data.LevelLoader();
+            var levelMapper = new LevelLoader();
             
             var rootObject = levelLoader.LoadLevel("GameData.json");
             var level = levelMapper.MapToLevel(rootObject);

@@ -5,7 +5,7 @@ using TempleOfDoom.Logic.Models.Factories;
 
 namespace TempleOfDoom.Logic;
 
-public class LevelMapper
+public class LevelLoader
 {
     public Level MapToLevel(RootObject rootObject)
     {
@@ -21,7 +21,7 @@ public class LevelMapper
         // Map connections
         foreach (var conn in rootObject.connections)
         {
-            Connection connection = ConnectionFactory.CreateConnection(conn);
+            var connection = ConnectionFactory.CreateConnection(conn);
             level.AddConnection(connection);
             
             if (conn.NORTH > 0 && conn.SOUTH > 0) 
@@ -37,16 +37,14 @@ public class LevelMapper
             }
 
             // Handle Horizontal (West <-> East)
-            if (conn.WEST > 0 && conn.EAST > 0)
+            if (conn.WEST <= 0 || conn.EAST <= 0) continue;
             {
                 var westRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.WEST);
                 var eastRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.EAST);
 
-                if (westRoom != null && eastRoom != null)
-                {
-                    CreateDoor(westRoom, eastRoom.Id, conn.doors, "EAST");
-                    CreateDoor(eastRoom, westRoom.Id, conn.doors, "WEST");
-                }
+                if (westRoom == null || eastRoom == null) continue;
+                CreateDoor(westRoom, eastRoom.Id, conn.doors, "EAST");
+                CreateDoor(eastRoom, westRoom.Id, conn.doors, "WEST");
             }
         }
         
