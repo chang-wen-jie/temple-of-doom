@@ -2,9 +2,9 @@
 
 public interface ISubject
 {
-    void attach(IObserver observer);
+    void Attach(IObserver observer);
     
-    void detach(IObserver observer);
+    void Detach(IObserver observer);
     
-    void notify();
+    void Notify();
 }

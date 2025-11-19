@@ -2,16 +2,10 @@
 
 public class OpenOnOddDecorator(Door wrappee) : Decorator(wrappee)
 {
-    public void Open(int numberOfRemainingLives)
+    public override bool CanEnter(Player player)
     {
-        if (numberOfRemainingLives % 2 != 0)
-        {
-            base.Open();
-        }
-    }
-    
-    public void Close()
-    {
-        base.Close();
+        if (!base.CanEnter(player)) return false;
+
+        return player.Lives % 2 != 0;
     }
 }

@@ -5,11 +5,11 @@ namespace TempleOfDoom.Logic.Models;
 
 public class Room
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
     public string Type { get; set; }
-    public int Width { get; set; }
-    public int Height { get; set; }
-    public List<IItem> Items { get; set; } = [];
+    public int Width { get; init; }
+    public int Height { get; init; }
+    public List<IItem> Items { get; init; } = [];
     public List<Door> Doors { get; } = [];
     
     public bool IsPositionValid(int x, int y)

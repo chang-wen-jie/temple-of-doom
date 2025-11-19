@@ -8,9 +8,7 @@ public static class ConnectionFactory
     public static Connection CreateConnection(ConnectionDto connectionDto)
     {
         var connection = new Connection();
-        var doors = connectionDto.doors;
 
-        // Define all possible directions
         var directions = new Dictionary<string, int>
         {
             { "north", connectionDto.NORTH },
@@ -19,7 +17,6 @@ public static class ConnectionFactory
             { "west", connectionDto.WEST }
         };
         
-        var doorIndex = 0;
         foreach (var (direction, roomId) in directions)
         {
             if (roomId == 0)
@@ -27,14 +24,7 @@ public static class ConnectionFactory
                 continue;
             }
             
-            // Create door if available and there are doors left to assign
-            Door? door = null;
-            if (doorIndex < doors.Length)
-            {
-                door = DoorFactory.CreateDoor(doors[doorIndex++]);
-            }
-
-            connection.AddRoomDirection(direction, roomId, door);
+            connection.AddRoomDirection(direction, roomId);
         }
 
         return connection;

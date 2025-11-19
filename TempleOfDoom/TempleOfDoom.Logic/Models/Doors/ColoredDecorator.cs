@@ -1,19 +1,11 @@
 ﻿namespace TempleOfDoom.Logic.Models.Doors;
 
-public class ColoredDecorator(Door wrappee, string color) : Decorator(wrappee)
+public class ColoredDecorator(Door wrappee, string requiredColor) : Decorator(wrappee)
 {
-    private string color { get; } = color;
+    private readonly string _requiredColor = requiredColor;
     
-    public void Open(string color)
+    public override bool CanEnter(Player player)
     {
-        if (color == this.color)
-        {
-            base.Open();
-        }
-    }
-
-    public override void Close()
-    {
-        base.Open();
+        return base.CanEnter(player) && player.HasKeyWithColor(_requiredColor);
     }
 }

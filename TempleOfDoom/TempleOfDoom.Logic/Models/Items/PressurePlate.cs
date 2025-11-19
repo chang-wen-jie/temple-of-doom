@@ -9,14 +9,14 @@ public class PressurePlate : IItem, ISubject
     public int XPos { get; set; }
     public int YPos { get; set; }
     public bool IsLootable => false;
-    private List<IObserver> _observers = new();
+    private readonly List<IObserver> _observers = [];
 
     public void Interact(Player player)
     {
-        notify();
+        Notify();
     }
 
-    public void attach(IObserver observer)
+    public void Attach(IObserver observer)
     {
         if (!_observers.Contains(observer))
         {
@@ -24,16 +24,16 @@ public class PressurePlate : IItem, ISubject
         }
     }
 
-    public void detach(IObserver observer)
+    public void Detach(IObserver observer)
     {
         _observers.Remove(observer);
     }
 
-    public void notify()
+    public void Notify()
     {
-        foreach (IObserver observer in _observers)
+        foreach (var observer in _observers)
         {
-            observer.update(this);
+            observer.Update(this);
         }
     }
 }

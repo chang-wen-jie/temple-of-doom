@@ -5,18 +5,16 @@ namespace TempleOfDoom.Logic.Models.Factories;
 
 public static class DoorFactory
 {
-    public static Door CreateDoor(DoorDto doorDto)
+    public static Door DecorateDoor(Door doorToDecorate, DoorDto doorDto)
     {
-        var door = new BaseDoor();
-
         return doorDto.type switch
          {
-             "colored" => new ColoredDecorator(door, doorDto.color),
-             "toggle" => new ToggleDecorator(door),
-             "closing gate" => new ClosingGateDecorator(door),
-             "open on odd" => new OpenOnOddDecorator(door),
-             "open on stones in room" => new OpenOnStonesInRoomDecorator(door, doorDto.no_of_stones),
-             _ => throw new ArgumentException("Invalid door type")
+             "colored" => new ColoredDecorator(doorToDecorate, doorDto.color),
+             "toggle" => new ToggleDecorator(doorToDecorate),
+             "closing gate" => new ClosingGateDecorator(doorToDecorate),
+             "open on odd" => new OpenOnOddDecorator(doorToDecorate),
+             "open on stones in room" => new OpenOnStonesInRoomDecorator(doorToDecorate, doorDto.no_of_stones),
+             _ => doorToDecorate
          };
     }
 }

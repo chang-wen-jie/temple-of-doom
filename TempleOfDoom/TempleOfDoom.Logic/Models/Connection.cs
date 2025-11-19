@@ -4,14 +4,14 @@ namespace TempleOfDoom.Logic.Models;
 
 public class Connection
 {
-    private Dictionary<string, (int RoomdId, Door? Door)> _roomDirections = new();
+    private readonly Dictionary<string, int> _roomDirections = new();
     
-    public void AddRoomDirection(string direction, int roomId, Door? door)
+    public void AddRoomDirection(string direction, int roomId)
     {
-        _roomDirections[direction.ToLower()] = (roomId, door);
+        _roomDirections[direction.ToLower()] = roomId;
     }
     
-    public IEnumerable<KeyValuePair<string, (int RoomId, Door? Door)>> GetRoomDirections()
+    public IEnumerable<KeyValuePair<string, int>> GetRoomDirections()
     {
         return _roomDirections;
     }

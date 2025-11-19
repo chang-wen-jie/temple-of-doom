@@ -1,22 +1,10 @@
 ﻿namespace TempleOfDoom.Logic.Models.Doors;
 
-public class ClosingGateDecorator : Decorator
+public class ClosingGateDecorator(Door wrappee) : Decorator(wrappee)
 {
-    private Door _wrappee { get; }
-
-    public ClosingGateDecorator(Door wrappee) : base(wrappee)
+    public override void OnEnter()
     {
-        _wrappee = wrappee;
-        base.Open();
-    }
-
-    public void open()
-    {
-        base.Close();
-    }
-
-    public void close()
-    {
-        base.Close();
+        Close();
+        base.OnEnter();
     }
 }

@@ -28,6 +28,15 @@ namespace TempleOfDoom.Logic.Models
             return Items.AsReadOnly();
         }
         
+        public bool HasKeyWithColor(string requiredColor)
+        {
+            if (string.IsNullOrEmpty(requiredColor)) return false;
+
+            return Items
+                .OfType<Key>()
+                .Any(k => k.Color.Equals(requiredColor, StringComparison.OrdinalIgnoreCase));
+        }
+        
         public void Move(Room currentRoom, string direction)
         {
             var (newX, newY) = CalculateNewPosition(direction);

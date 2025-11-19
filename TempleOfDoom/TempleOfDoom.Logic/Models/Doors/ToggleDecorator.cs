@@ -4,18 +4,9 @@ namespace TempleOfDoom.Logic.Models.Doors;
 
 public class ToggleDecorator(Door wrappee) : Decorator(wrappee), IObserver
 {
-    private void Open()
+    public void Update(ISubject subject)
     {
-        base.Open();
-    }
-    
-    private void Close()
-    {
-        base.Close();
-    }
-
-    public void update(ISubject subject)
-    {
-        Open();
+        if (IsOpen) Close();
+        else Open();
     }
 }

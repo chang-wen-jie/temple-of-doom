@@ -8,7 +8,7 @@ public class DisappearingBoobyTrap : IItem
     public int YPos { get; set; }
     public bool IsLootable => false;
     
-    // TODO: Use Observer pattern to notify the game that the item should be removed instead of current implementation
+    // TODO: Use Observer pattern to Notify the game that the item should be removed instead of current implementation
     public bool ShouldBeRemoved { get; private set; }
     
     public void Interact(Player player)

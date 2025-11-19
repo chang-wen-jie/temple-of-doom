@@ -47,13 +47,26 @@ public static class RoomRenderer
         return grid;
     }
     
+    private static char GetDoorSymbol(Door door, bool isHorizontalWall)
+    {
+        return door.DoorType switch
+        {
+            "colored" => isHorizontalWall ? '=' : '|',
+            "toggle" => '⊥',
+            "closing gate" => '∩',
+            "open on stones in room" => '?',
+            "open on odd" => '!',
+            _ => ' '
+        };
+    }
+    
     private static void RenderDoors(Room room, char[,] grid)
     {
         foreach (var door in room.Doors)
         {
             var isHorizontalWall = (door.Y == 0 || door.Y == room.Height - 1);
             
-            grid[door.Y, door.X] = door.GetSymbol(isHorizontalWall);
+            grid[door.Y, door.X] = GetDoorSymbol(door, isHorizontalWall);
         }
     }
 

@@ -1,15 +1,9 @@
 ﻿namespace TempleOfDoom.Logic.Models.Doors;
 
-public class OpenOnStonesInRoomDecorator: Decorator
+public class OpenOnStonesInRoomDecorator(Door wrappee, int requiredStones) : Decorator(wrappee)
 {
-    private Door _wrappee { get; }
-    private int _requiredStones { get; }
-    
-    public OpenOnStonesInRoomDecorator(Door wrappee, int requiredStones) : base(wrappee)
-    {
-        _wrappee = wrappee;
-        _requiredStones = requiredStones;
-    }
+    private Door _wrappee { get; } = wrappee;
+    private int _requiredStones { get; } = requiredStones;
 
     public void Open(int stonesInRoom)
     {
