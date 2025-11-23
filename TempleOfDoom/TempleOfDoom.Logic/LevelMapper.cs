@@ -7,9 +7,9 @@ using TempleOfDoom.Logic.Models.Items;
 
 namespace TempleOfDoom.Logic;
 
-public class LevelLoader
+public abstract class LevelMapper
 {
-    public Level MapToLevel(RootObject rootObject)
+    public static Level MapToLevel(RootObject rootObject)
     {
         var level = new Level();
 
@@ -24,7 +24,7 @@ public class LevelLoader
             var connection = ConnectionFactory.CreateConnection(conn);
             level.AddConnection(connection);
             
-            if (conn.NORTH > 0 && conn.SOUTH > 0) 
+            if (conn is { NORTH: > 0, SOUTH: > 0 }) 
             {
                 var northRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.NORTH);
                 var southRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.SOUTH);
@@ -45,26 +45,20 @@ public class LevelLoader
                 }
             }
 
-            // Handle Horizontal (West <-> East)
-            if (conn.WEST > 0 && conn.EAST > 0)
+            if (conn is not { WEST: > 0, EAST: > 0 }) continue;
             {
                 var westRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.WEST);
                 var eastRoom = level.Rooms.FirstOrDefault(r => r.Id == conn.EAST);
 
-                if (westRoom != null && eastRoom != null)
-                {
-                    // A. Create the raw BaseDoors
-                    var doorWest = CreateBaseDoor(westRoom, eastRoom.Id, "EAST", conn.doors);
-                    var doorEast = CreateBaseDoor(eastRoom, westRoom.Id, "WEST", conn.doors);
+                if (westRoom == null || eastRoom == null) continue;
+                var doorWest = CreateBaseDoor(westRoom, eastRoom.Id, "EAST", conn.doors);
+                var doorEast = CreateBaseDoor(eastRoom, westRoom.Id, "WEST", conn.doors);
 
-                    // B. Link them
-                    doorWest.TwinDoor = doorEast;
-                    doorEast.TwinDoor = doorWest;
+                doorWest.TwinDoor = doorEast;
+                doorEast.TwinDoor = doorWest;
 
-                    // C. Decorate and Add
-                    westRoom.Doors.Add(ApplyDecorators(doorWest, conn.doors));
-                    eastRoom.Doors.Add(ApplyDecorators(doorEast, conn.doors));
-                }
+                westRoom.Doors.Add(ApplyDecorators(doorWest, conn.doors));
+                eastRoom.Doors.Add(ApplyDecorators(doorEast, conn.doors));
             }
         }
         
@@ -82,7 +76,7 @@ public class LevelLoader
         return level;
     }
     
-    private BaseDoor CreateBaseDoor(Room room, int targetRoomId, string wallLocation, DoorDto[] doorDtos)
+    private static BaseDoor CreateBaseDoor(Room room, int targetRoomId, string wallLocation, DoorDto[] doorDtos)
     {
         int x = 0, y = 0;
 
@@ -108,7 +102,7 @@ public class LevelLoader
         };
     }
     
-    private Door ApplyDecorators(Door door, DoorDto[] doorDtos)
+    private static Door ApplyDecorators(Door door, DoorDto[] doorDtos)
     {
         if (doorDtos == null) return door;
 
@@ -116,29 +110,22 @@ public class LevelLoader
 
         foreach (var dto in doorDtos)
         {
-            // Use your Factory to wrap the door
             finalDoor = DoorFactory.DecorateDoor(finalDoor, dto);
         }
 
         return finalDoor;
     }
     
-    private void ConnectMechanisms(Level level)
+    private static void ConnectMechanisms(Level level)
     {
         foreach (var room in level.Rooms)
         {
-            // 1. Find all Pressure Plates in this room
-            // We use OfType to filter the generic IItem list
             var plates = room.Items.OfType<PressurePlate>().ToList();
 
-            // If there are no plates, move to the next room
-            if (!plates.Any()) continue;
+            if (plates.Count == 0) continue;
 
-            // 2. Find all Doors in this room that are Observers (Toggle Doors)
-            // Note: This looks for doors where the OUTERMOST layer implements IObserver
             var toggleDoors = room.Doors.OfType<IObserver>().ToList();
 
-            // 3. Wire them together
             foreach (var plate in plates)
             {
                 foreach (IObserver doorObserver in toggleDoors)

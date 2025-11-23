@@ -1,9 +1,18 @@
-﻿namespace TempleOfDoom.Data.Strategies;
+﻿using System.Xml.Serialization;
+
+namespace TempleOfDoom.Data.Strategies;
 
 public class XmlLevelLoadingStrategy : ILevelLoadStrategy
 {
     public RootObject LoadLevel(string filePath)
     {
-        throw new NotImplementedException();
+        if (!File.Exists(filePath)) throw new FileNotFoundException("File not found", filePath);
+
+        var serializer = new XmlSerializer(typeof(RootObject));
+
+        using var reader = new StreamReader(filePath);
+        // Cast the result to RootObject
+        return (RootObject)serializer.Deserialize(reader) 
+               ?? throw new Exception("Failed to parse XML");
     }
 }

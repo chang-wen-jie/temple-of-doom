@@ -26,18 +26,13 @@ public class GameManager(Level level)
 
     private void TryEnterDoor(Player player, Room currentRoom, Door door, string direction)
     {
-        // FIX 1: Remove 'if (door is BaseDoor)'.
-        // We trust the polymorphic 'CanEnter' to handle Keys, Lives, etc.
         if (!door.CanEnter(player))
         {
             return; 
         }
 
-        // FIX 2: Move the player BEFORE triggering post-entry effects
         ChangeRoom(player, currentRoom, door, direction);
         
-        // FIX 3: Trigger the side effects (like Closing Gate)
-        // Ensure your abstract Door class has the virtual 'OnEnter' method we discussed.
         door.OnEnter();
     }
 

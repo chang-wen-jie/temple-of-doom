@@ -6,15 +6,13 @@ public class JsonLevelLoadStrategy : ILevelLoadStrategy
 {
     public RootObject LoadLevel(string filePath)
     {
+        if (!File.Exists(filePath)) throw new FileNotFoundException("File not found", filePath);
+
         var json = File.ReadAllText(filePath);
-        try
-        {
-            return JsonSerializer.Deserialize<RootObject>(json) ?? throw new Exception("Kan GameData.json niet inlezen");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        
+        return JsonSerializer.Deserialize<RootObject>(json, new JsonSerializerOptions 
+        { 
+            PropertyNameCaseInsensitive = true 
+        }) ?? throw new Exception("Failed to deserialize JSON");
     }
 }

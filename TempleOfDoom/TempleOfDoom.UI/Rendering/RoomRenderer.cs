@@ -177,4 +177,11 @@ public static class RoomRenderer
         return item.XPos >= 0 && item.XPos < width && 
                item.YPos >= 0 && item.YPos < height;
     }
+    
+    public static void RenderMessage(string message)
+    {
+        Console.WriteLine("\n" + new string('*', 50));
+        Console.WriteLine("     " + message);
+        Console.WriteLine(new string('*', 50));
+    }
 }

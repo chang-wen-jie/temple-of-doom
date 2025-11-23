@@ -2,24 +2,9 @@
 
 namespace TempleOfDoom.Data;
 
-public class LevelLoader
+public class LevelLoader(ILevelLoadStrategy strategy)
 {
-    private ILevelLoadStrategy _strategy;
-
-    public LevelLoader()
-    {
-        _strategy = new JsonLevelLoadStrategy();
-    }
-    
-    public LevelLoader(ILevelLoadStrategy strategy)
-    {
-        _strategy = strategy;
-    }
-    
-    public void setStrategy(ILevelLoadStrategy strategy)
-    {
-        _strategy = strategy;
-    }
+    private readonly ILevelLoadStrategy _strategy = strategy;
     
     public RootObject LoadLevel(string filePath)
     {

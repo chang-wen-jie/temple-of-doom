@@ -1,9 +1,8 @@
-﻿
-using TempleOfDoom.Data;
+﻿using TempleOfDoom.Data;
+using TempleOfDoom.Data.Strategies;
 using TempleOfDoom.Logic;
 using TempleOfDoom.Logic.Models.Items;
 using TempleOfDoom.UI.Rendering;
-using LevelLoader = TempleOfDoom.Logic.LevelLoader;
 
 namespace TempleOfDoom.ConsoleApp
 {
@@ -17,21 +16,23 @@ namespace TempleOfDoom.ConsoleApp
             }
             catch (Exception ex)
             {
-                HandleGameError(ex);
+                RoomRenderer.RenderMessage("Een fout heeft zich opgetreden: " + ex.Message);
             }
         }
 
         private static void RunGame()
         {
-            var levelLoader = new Data.LevelLoader();
-            var levelMapper = new LevelLoader();
+            const string fileName = "GameData.json";
             
-            var rootObject = levelLoader.LoadLevel("GameData.json");
-            var level = levelMapper.MapToLevel(rootObject);
+            ILevelLoadStrategy strategy = fileName.EndsWith(".json")
+                ? new JsonLevelLoadStrategy()
+                : new XmlLevelLoadingStrategy();
             
+            var dataLoader = new LevelLoader(strategy);
+            var rootObject = dataLoader.LoadLevel(fileName);
+            var level = LevelMapper.MapToLevel(rootObject);
             var gameManager = new GameManager(level);
             var player = level.Player;
-            
             var collectedSankaraStones = 0;
 
             while (player.Lives > 0 && collectedSankaraStones < 5)
@@ -52,7 +53,8 @@ namespace TempleOfDoom.ConsoleApp
                     .Count();
             }
             
-            DisplayGameResult(collectedSankaraStones);
+            var resultMessage = collectedSankaraStones == 5 ? "GEWONNEN!" : "VERLOREN!";
+            RoomRenderer.RenderMessage(resultMessage);
         }
 
         private static string MapKeyToDirection(ConsoleKey key)
@@ -65,26 +67,6 @@ namespace TempleOfDoom.ConsoleApp
                 ConsoleKey.RightArrow => "right",
                 _ => ""
             };
-        }
-
-        private static void DisplayGameResult(int collectedSankaraStones)
-        {
-            var resultMessage = collectedSankaraStones == 5 
-                ? "GAME CLEARED" 
-                : "GAME OVER";
-
-            Console.WriteLine(
-                "\n" + new string('*', 50) + "\n" + 
-                new string(' ', 5) + resultMessage + "\n" + 
-                new string('*', 50)
-            );
-        }
-
-        private static void HandleGameError(Exception ex)
-        {
-            Console.WriteLine("An error occurred during the game:");
-            Console.WriteLine(ex.Message);
-            Console.WriteLine("Please check the game configuration and try again.");
         }
     }
 }
