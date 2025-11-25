@@ -2,11 +2,12 @@
 using TempleOfDoom.Data.Strategies;
 using TempleOfDoom.Logic;
 using TempleOfDoom.Logic.Models.Items;
+using TempleOfDoom.UI.Inputs;
 using TempleOfDoom.UI.Rendering;
 
 namespace TempleOfDoom.ConsoleApp
 {
-    internal abstract class Program
+    internal static class Program
     {
         private static void Main()
         {
@@ -41,8 +42,7 @@ namespace TempleOfDoom.ConsoleApp
                 
                 RoomRenderer.RenderRoom(currentRoom, player);
 
-                var key = Console.ReadKey(true).Key;
-                var direction = MapKeyToDirection(key);
+                var direction = InputReader.GetDirection();
 
                 if (string.IsNullOrEmpty(direction)) continue;
                 
@@ -55,18 +55,6 @@ namespace TempleOfDoom.ConsoleApp
             
             var resultMessage = collectedSankaraStones == 5 ? "GEWONNEN!" : "VERLOREN!";
             RoomRenderer.RenderMessage(resultMessage);
-        }
-
-        private static string MapKeyToDirection(ConsoleKey key)
-        {
-            return key switch
-            {
-                ConsoleKey.UpArrow => "up",
-                ConsoleKey.DownArrow => "down",
-                ConsoleKey.LeftArrow => "left",
-                ConsoleKey.RightArrow => "right",
-                _ => ""
-            };
         }
     }
 }

@@ -11,7 +11,6 @@ public class XmlLevelLoadingStrategy : ILevelLoadStrategy
         var serializer = new XmlSerializer(typeof(RootObject));
 
         using var reader = new StreamReader(filePath);
-        // Cast the result to RootObject
         return (RootObject)serializer.Deserialize(reader) 
                ?? throw new Exception("Failed to parse XML");
     }
