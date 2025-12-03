@@ -2,49 +2,80 @@
 
 public class RootObject
 {
-    public RoomDto[] rooms { get; set; }
-    public ConnectionDto[] connections { get; set; }
-    public PlayerDto player { get; set; }
+    public RoomDto[] Rooms { get; set; }
+    public ConnectionDto[] Connections { get; set; }
+    public PlayerDto Player { get; set; }
 }
 
 public class RoomDto
 {
-    public int id { get; set; }
-    public string type { get; set; }
-    public int width { get; set; }
-    public int height { get; set; }
-    public ItemDto[] items { get; set; }
+    public int Id { get; set; }
+    public string Type { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public ItemDto[]? Items { get; set; }
+    public SpecialFloorTileDto[]? SpecialFloorTiles { get; set; }
+    public EnemyDto[]? Enemies { get; set; }
 }
 
 public class ItemDto
 {
-    public string type { get; set; }
-    public int damage { get; set; }
-    public int x { get; set; }
-    public int y { get; set; }
-    public string color { get; set; }
+    public string Type { get; set; }
+    public int Damage { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public string Color { get; set; }
+}
+
+public class SpecialFloorTileDto
+{
+    public string Type { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+}
+
+public class EnemyDto
+{
+    public string Type { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int MinX { get; set; }
+    public int MinY { get; set; }
+    public int MaxX { get; set; }
+    public int MaxY { get; set; }
 }
 
 public class ConnectionDto
 {
-    public int NORTH { get; set; }
-    public int SOUTH { get; set; }
-    public DoorDto[] doors { get; set; }
-    public int WEST { get; set; }
+    public int North { get; set; }
+    public int South { get; set; }
+    public DoorDto[]? Doors { get; set; }
+    public int West { get; set; }
     public int EAST { get; set; }
+    public int Upper { get; set; }
+    public int Lower { get; set; }
+    public LadderDto Ladder { get; set; }
 }
 
 public class DoorDto
 {
-    public string type { get; set; }
-    public string color { get; set; }
-    public int no_of_stones { get; set; }
+    public string Type { get; set; }
+    public string? Color { get; set; }
+    public int NoOfStones { get; set; }
+}
+
+public class LadderDto
+{
+    public int UpperX { get; set; }
+    public int UpperY { get; set; }
+    public int LowerX { get; set; }
+    public int LowerY { get; set; }
 }
 
 public class PlayerDto
 {
-    public int startRoomId { get; set; }
-    public int startX { get; set; }
-    public int startY { get; set; }
-    public int lives { get; set; }
+    public int StartRoomId { get; set; }
+    public int StartX { get; set; }
+    public int StartY { get; set; }
+    public int Lives { get; set; }
 }

@@ -11,10 +11,10 @@ public static class ConnectionFactory
 
         var directions = new Dictionary<string, int>
         {
-            { "north", connectionDto.NORTH },
-            { "south", connectionDto.SOUTH },
+            { "north", connectionDto.North },
+            { "south", connectionDto.South },
             { "east", connectionDto.EAST },
-            { "west", connectionDto.WEST }
+            { "west", connectionDto.West }
         };
         
         foreach (var (direction, roomId) in directions)

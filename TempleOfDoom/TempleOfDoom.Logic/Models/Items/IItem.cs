@@ -2,9 +2,9 @@
 
 public interface IItem
 {
-    int XPos { get; set; }
-    int YPos { get; set; }
+    int XPos { get; }
+    int YPos { get; }
     bool IsLootable { get; }
-    
+
     void Interact(Player player);
 }

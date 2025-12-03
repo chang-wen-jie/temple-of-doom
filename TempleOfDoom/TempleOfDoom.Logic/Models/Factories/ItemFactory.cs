@@ -1,4 +1,5 @@
 ﻿using TempleOfDoom.Data;
+using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Models.Items;
 
 namespace TempleOfDoom.Logic.Models.Factories;
@@ -7,42 +8,37 @@ public static class ItemFactory
 {
     public static IItem CreateItem(ItemDto itemDto)
     {
-        return itemDto.type switch
+        return itemDto.Type switch
         {
-            "boobytrap" => new BoobyTrap()
+            ItemTypes.BoobyTrap => new BoobyTrap
             {
-                Type = itemDto.type,
-                Damage = itemDto.damage,
-                XPos = itemDto.x,
-                YPos = itemDto.y,
+                Damage = itemDto.Damage,
+                XPos = itemDto.X,
+                YPos = itemDto.Y
             },
-            "disappearing boobytrap" => new DisappearingBoobyTrap()
+            ItemTypes.DisappearingBoobyTrap => new DisappearingBoobyTrap
             {
-                Type = itemDto.type,
-                Damage = itemDto.damage,
-                XPos = itemDto.x,
-                YPos = itemDto.y,
+                Damage = itemDto.Damage,
+                XPos = itemDto.X,
+                YPos = itemDto.Y
             },
-            "sankara stone" => new SankaraStone()
+            ItemTypes.SankaraStone => new SankaraStone
             {
-                Type = itemDto.type,
-                XPos = itemDto.x,
-                YPos = itemDto.y,
+                XPos = itemDto.X,
+                YPos = itemDto.Y
             },
-            "key" => new Key()
+            ItemTypes.Key => new Key
             {
-                Type = itemDto.type,
-                Color = itemDto.color,
-                XPos = itemDto.x,
-                YPos = itemDto.y,
+                Color = itemDto.Color,
+                XPos = itemDto.X,
+                YPos = itemDto.Y
             },
-            "pressure plate" => new PressurePlate()
+            ItemTypes.PressurePlate => new PressurePlate
             {
-                Type = itemDto.type,
-                XPos = itemDto.x,
-                YPos = itemDto.y,
+                XPos = itemDto.X,
+                YPos = itemDto.Y
             },
-            _ => throw new ArgumentException("Invalid item type")
+            _ => throw new ArgumentException("Ongeldige ItemType")
         };
     }
 }

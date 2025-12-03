@@ -38,7 +38,7 @@ namespace TempleOfDoom.ConsoleApp
 
             while (player.Lives > 0 && collectedSankaraStones < 5)
             {
-                var currentRoom = level.Rooms.First(r => r.Id == player.StartRoomId);
+                var currentRoom = level.Rooms.First(r => r.Id == player.CurrentRoomId);
                 
                 RoomRenderer.RenderRoom(currentRoom, player);
 
@@ -48,7 +48,7 @@ namespace TempleOfDoom.ConsoleApp
                 
                 gameManager.HandlePlayerInput(direction);
 
-                collectedSankaraStones = player.GetItems()
+                collectedSankaraStones = player.Inventory
                     .OfType<SankaraStone>()
                     .Count();
             }

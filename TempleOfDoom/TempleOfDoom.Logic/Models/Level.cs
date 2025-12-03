@@ -6,14 +6,9 @@ public class Level
     public List<Connection> Connections { get; } = new();
     public Player Player { get; private set; }
 
-    public void setPlayer(Player player)
+    public void SetPlayer(Player player)
     {
         Player = player;
-    }
-    
-    public void AddRoom(Room room)
-    {
-        Rooms.Add(room);
     }
     
     public void AddConnection(Connection connection)

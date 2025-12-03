@@ -1,6 +1,8 @@
+using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Models;
 using TempleOfDoom.Logic.Models.Doors;
 using TempleOfDoom.Logic.Models.Items;
+using TempleOfDoom.UI.Constants;
 
 namespace TempleOfDoom.UI.Rendering;
 
@@ -10,13 +12,10 @@ public static class RoomRenderer
 
     public static void RenderRoom(Room room, Player player)
     {
-        var grid = CreateRoomGrid(room);
+        var grid = GridBuilder.Build(room, player);
+
         Console.Clear();
-        
         RenderHeader();
-        RenderDoors(room, grid);
-        RenderItems(room, grid);
-        RenderPlayer(player, grid);
         RenderGrid(room, grid);
         RenderPlayerStats(player);
     }
@@ -24,110 +23,10 @@ public static class RoomRenderer
     private static void RenderHeader()
     {
         Console.WriteLine(
-            "\n" + 
-            new string(' ', LeftPadding) + "Welcome to the Temple of Doom!\n" + 
+            "\n" +
+            new string(' ', LeftPadding) + "Welcome to the Temple of Doom!\n" +
             new string('-', 50) + "\n"
         );
-    }
-
-    private static char[,] CreateRoomGrid(Room room)
-    {
-        var grid = new char[room.Height, room.Width];
-            
-        for (var y = 0; y < room.Height; y++)
-        {
-            for (var x = 0; x < room.Width; x++)
-            {
-                grid[y, x] = IsRoomBorder(x, y, room.Width, room.Height) 
-                    ? '#' 
-                    : ' ';
-            }
-        }
-            
-        return grid;
-    }
-    
-    private static char GetDoorSymbol(Door door, bool isHorizontalWall)
-    {
-        return door.DoorType switch
-        {
-            "colored" => isHorizontalWall ? '=' : '|',
-            "toggle" => '⊥',
-            "closing gate" => '∩',
-            "open on stones in room" => '?',
-            "open on odd" => '!',
-            _ => ' '
-        };
-    }
-    
-    private static void RenderDoors(Room room, char[,] grid)
-    {
-        foreach (var door in room.Doors)
-        {
-            var isHorizontalWall = (door.Y == 0 || door.Y == room.Height - 1);
-            
-            grid[door.Y, door.X] = GetDoorSymbol(door, isHorizontalWall);
-        }
-    }
-
-    private static char GetItemSymbol(IItem item)
-    {
-        return item switch
-        {
-            SankaraStone _ => 'S',
-            Key _ => 'K',
-            PressurePlate _ => 'T',
-            BoobyTrap _ => 'O',
-            DisappearingBoobyTrap _ => '@',
-            _ => '.'
-        };
-    }
-
-    private static void RenderItems(Room room, char[,] grid)
-    {
-        foreach (var item in room.Items.Where(item => IsValidItemPosition(item, room.Width, room.Height)))
-        {
-            grid[item.YPos, item.XPos] = GetItemSymbol(item);
-        }
-    }
-
-    private static void RenderPlayer(Player player, char[,] grid)
-    {
-        grid[player.StartYPos, player.StartXPos] = 'X';
-    }
-        
-    private static void SetConsoleColor(char gridItem, Door? door, IItem? item)
-    {
-        if (door is { DoorType: "colored" })
-        {
-            Console.ForegroundColor = door.Color?.ToLower() switch
-            {
-                "red" => ConsoleColor.Red,
-                "green" => ConsoleColor.Green,
-                _ => ConsoleColor.Gray
-            };
-            return;
-        }
-        
-        if (item is Key key)
-        {
-            Console.ForegroundColor = key.Color?.ToLower() switch
-            {
-                "red" => ConsoleColor.Red,
-                "green" => ConsoleColor.Green,
-                _ => ConsoleColor.Gray
-            };
-            return;
-        }
-        
-        Console.ForegroundColor = gridItem switch
-        {
-            'X' => ConsoleColor.Blue,
-            '#' => ConsoleColor.Yellow,
-            'S' => ConsoleColor.DarkYellow,
-            'K' => ConsoleColor.Green,
-            _ => ConsoleColor.Gray
-        };
     }
 
     private static void RenderGrid(Room room, char[,] grid)
@@ -138,50 +37,73 @@ public static class RoomRenderer
             for (var x = 0; x < grid.GetLength(1); x++)
             {
                 var symbol = grid[y, x];
+                // Objecten ophalen om kleuren te constateren
                 var door = room.Doors.FirstOrDefault(d => d.X == x && d.Y == y);
                 var item = room.Items.FirstOrDefault(i => i.XPos == x && i.YPos == y);
-                
-                SetConsoleColor(symbol, door, item);
 
+                SetConsoleColor(symbol, door, item);
                 Console.Write(symbol + " ");
             }
-                
+
             Console.WriteLine();
         }
-            
+
         Console.ResetColor();
     }
-        
+
+    private static void SetConsoleColor(char symbol, Door? door, IItem? item)
+    {
+        if (door is { DoorType: DoorTypes.Colored })
+        {
+            Console.ForegroundColor = door.Color?.ToLower() switch
+            {
+                GameColors.Red => ConsoleColor.Red,
+                GameColors.Green => ConsoleColor.Green,
+                _ => ConsoleColor.Gray
+            };
+            return;
+        }
+
+        if (item is Key key)
+        {
+            Console.ForegroundColor = key.Color?.ToLower() switch
+            {
+                GameColors.Red => ConsoleColor.Red,
+                GameColors.Green => ConsoleColor.Green,
+                _ => ConsoleColor.Gray
+            };
+            return;
+        }
+
+        Console.ForegroundColor = symbol switch
+        {
+            ConsoleSymbols.Player => ConsoleColor.Blue,
+            ConsoleSymbols.Wall => ConsoleColor.Yellow,
+            ConsoleSymbols.SankaraStone => ConsoleColor.DarkYellow,
+            ConsoleSymbols.Key => ConsoleColor.Green,
+            ConsoleSymbols.Enemy => ConsoleColor.Red,
+            ConsoleSymbols.Ice => ConsoleColor.Cyan,
+            ConsoleSymbols.DoorLadder => ConsoleColor.Magenta,
+            _ => ConsoleColor.Gray
+        };
+    }
+
     private static void RenderPlayerStats(Player player)
     {
-        var stones = player.GetItems().OfType<SankaraStone>().Count();
+        var stones = player.Inventory.OfType<SankaraStone>().Count();
 
         Console.WriteLine($"\n{new string(' ', LeftPadding)}Lives: {player.Lives}");
         Console.WriteLine($"{new string(' ', LeftPadding)}Sankara Stones: {stones}/5");
         Console.WriteLine($"\n{new string(' ', LeftPadding)}Inventory:");
-            
-        var keys = player.GetItems().OfType<Key>();
-        foreach (var key in keys)
-        {
-            Console.WriteLine($"{new string(' ', LeftPadding)}{key.Color} key");
-        }
+
+        var keys = player.Inventory.OfType<Key>();
+        foreach (var key in keys) Console.WriteLine($"{new string(' ', LeftPadding)}{key.Color} key");
     }
 
-    private static bool IsRoomBorder(int x, int y, int width, int height)
-    {
-        return x == 0 || y == 0 || x == width - 1 || y == height - 1;
-    }
-
-    private static bool IsValidItemPosition(IItem item, int width, int height)
-    {
-        return item.XPos >= 0 && item.XPos < width && 
-               item.YPos >= 0 && item.YPos < height;
-    }
-    
     public static void RenderMessage(string message)
     {
         Console.WriteLine("\n" + new string('*', 50));
-        Console.WriteLine("     " + message);
+        Console.WriteLine(new string(' ', LeftPadding) + message);
         Console.WriteLine(new string('*', 50));
     }
 }

@@ -2,14 +2,13 @@
 
 public class BoobyTrap : IItem
 {
-    public string Type { get; set; }
-    public int Damage { get; set; }
+    public int Damage { get; init; }
     public int XPos { get; set; }
     public int YPos { get; set; }
     public bool IsLootable => false;
     
     public void Interact(Player player)
     {
-        player.DecreaseLives(Damage);
+        player.TakeDamage(Damage);
     }
 }

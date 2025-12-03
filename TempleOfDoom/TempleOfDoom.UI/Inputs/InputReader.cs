@@ -16,6 +16,7 @@ public static class InputReader
             ConsoleKey.DownArrow => "down",
             ConsoleKey.LeftArrow => "left",
             ConsoleKey.RightArrow => "right",
+            ConsoleKey.Spacebar => "shoot",
             _ => ""
         };
     }

@@ -11,4 +11,10 @@
       <ProjectReference Include="..\TempleOfDoom.Data\TempleOfDoom.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="CODE_TempleOfDoom_DownloadableContent">
+        <HintPath>..\..\..\..\Documents\School\Herkansingen\CODE\CODE_TempleOfDoom_DownloadableContent.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

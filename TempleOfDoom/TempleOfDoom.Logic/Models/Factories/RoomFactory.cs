@@ -1,5 +1,4 @@
 ﻿using TempleOfDoom.Data;
-using TempleOfDoom.Logic.Models.Items;
 
 namespace TempleOfDoom.Logic.Models.Factories;
 
@@ -7,25 +6,27 @@ public static class RoomFactory
 {
     public static Room CreateRoom(RoomDto roomDto)
     {
-        var room = new Room()
-        {
-            Id = roomDto.id,
-            Type = roomDto.type,
-            Width = roomDto.width,
-            Height = roomDto.height,
-            Items = new List<IItem>()
-        };
+        var room = new Room(
+            roomDto.Id,
+            roomDto.Width,
+            roomDto.Height
+        );
 
-        
-        if (roomDto.items == null)
-        {
-            return room;
-        }
-        
-        foreach (ItemDto itemDto in roomDto.items)
-        {
-            room.Items.Add(ItemFactory.CreateItem(itemDto));
-        }
+        if (roomDto.Items != null)
+            foreach (var itemDto in roomDto.Items)
+            {
+                var item = ItemFactory.CreateItem(itemDto);
+                room.AddItem(item);
+            }
+
+        if (roomDto.SpecialFloorTiles == null) return room;
+        foreach (var tileDto in roomDto.SpecialFloorTiles)
+            room.AddSpecialFloorTile(new SpecialFloorTile
+            {
+                Type = tileDto.Type,
+                X = tileDto.X,
+                Y = tileDto.Y
+            });
 
         return room;
     }
