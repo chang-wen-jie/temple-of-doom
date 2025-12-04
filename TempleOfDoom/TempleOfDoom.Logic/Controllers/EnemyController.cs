@@ -57,8 +57,17 @@ public static class EnemyController
             var (enemyX, enemyY) = GetCoordinates(enemy);
 
             foreach (var (attackZoneX, attackZoneY) in attackZones)
-                if (enemyX == attackZoneX && enemyY == attackZoneY)
-                    enemy.DoDamage(1);
+            {
+                if (enemyX != attackZoneX || enemyY != attackZoneY) continue;
+                enemy.DoDamage(1);
+
+                // DLL zet CurrentField en vijand (Item) op null; opnieuw toewijzen
+                if (enemy is not Enemy { NumberOfLives: > 0 } survivingEnemy) continue;
+                var field = room.GetField(enemyX, enemyY);
+                survivingEnemy.CurrentField = field;
+
+                if (field != null) field.Item = survivingEnemy;
+            }
         }
     }
 
