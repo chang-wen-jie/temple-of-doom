@@ -1,5 +1,6 @@
 using CODE_TempleOfDoom_DownloadableContent;
 using TempleOfDoom.Data;
+using TempleOfDoom.Logic.Constants;
 
 namespace TempleOfDoom.Logic.Models.Factories;
 
@@ -13,8 +14,8 @@ public static class EnemyFactory
         {
             ILiving? enemy = dto.Type switch
             {
-                "horizontal" => new HorizontallyMovingEnemy(3, dto.X, dto.Y, dto.MinX, dto.MaxX),
-                "vertical" => new VerticallyMovingEnemy(3, dto.X, dto.Y, dto.MinY, dto.MaxY),
+                EnemyDirection.Horizontal => new HorizontallyMovingEnemy(3, dto.X, dto.Y, dto.MinX, dto.MaxX),
+                EnemyDirection.Vertical => new VerticallyMovingEnemy(3, dto.X, dto.Y, dto.MinY, dto.MaxY),
                 _ => null
             };
 

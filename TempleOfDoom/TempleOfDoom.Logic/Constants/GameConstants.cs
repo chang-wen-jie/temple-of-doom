@@ -21,6 +21,12 @@ public static class CardinalDirection
     public const string West = "WEST";
 }
 
+public static class EnemyDirection
+{
+    public const string Horizontal = "horizontal";
+    public const string Vertical = "vertical";
+}
+
 public static class GameColors
 {
     public const string Red = "red";

@@ -1,4 +1,5 @@
 ﻿using TempleOfDoom.Data;
+using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Models.Doors;
 
 namespace TempleOfDoom.Logic.Models.Factories;
@@ -11,19 +12,16 @@ public static class ConnectionFactory
 
         var directions = new Dictionary<string, int>
         {
-            { "north", connectionDto.North },
-            { "south", connectionDto.South },
-            { "east", connectionDto.EAST },
-            { "west", connectionDto.West }
+            { CardinalDirection.North, connectionDto.North },
+            { CardinalDirection.South, connectionDto.South },
+            { CardinalDirection.East, connectionDto.EAST },
+            { CardinalDirection.West, connectionDto.West }
         };
-        
+
         foreach (var (direction, roomId) in directions)
         {
-            if (roomId == 0)
-            {
-                continue;
-            }
-            
+            if (roomId == 0) continue;
+
             connection.AddRoomDirection(direction, roomId);
         }
 
