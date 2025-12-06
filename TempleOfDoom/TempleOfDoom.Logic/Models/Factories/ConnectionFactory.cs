@@ -1,30 +1,35 @@
 ﻿using TempleOfDoom.Data;
+using TempleOfDoom.Data.DTOs;
 using TempleOfDoom.Logic.Constants;
-using TempleOfDoom.Logic.Models.Doors;
+using TempleOfDoom.Logic.Models.Level;
 
 namespace TempleOfDoom.Logic.Models.Factories;
 
 public static class ConnectionFactory
 {
-    public static Connection CreateConnection(ConnectionDto connectionDto)
+    public static Connection CreateConnection(ConnectionDto connDto)
     {
-        var connection = new Connection();
+        var conn = new Connection();
 
         var directions = new Dictionary<string, int>
         {
-            { CardinalDirection.North, connectionDto.North },
-            { CardinalDirection.South, connectionDto.South },
-            { CardinalDirection.East, connectionDto.EAST },
-            { CardinalDirection.West, connectionDto.West }
+            { CardinalDirection.North, connDto.North },
+            { CardinalDirection.South, connDto.South },
+            { CardinalDirection.East, connDto.East },
+            { CardinalDirection.West, connDto.West },
+            { RelativeDirection.Upper, connDto.Upper },
+            { RelativeDirection.Lower, connDto.Lower }
         };
 
+        // Aangrenzende kamers toevoegen aan lijst
         foreach (var (direction, roomId) in directions)
         {
             if (roomId == 0) continue;
 
-            connection.AddRoomDirection(direction, roomId);
+            conn.AddRoomDirection(direction, roomId);
         }
 
-        return connection;
+        // Lijst is compleet
+        return conn;
     }
 }

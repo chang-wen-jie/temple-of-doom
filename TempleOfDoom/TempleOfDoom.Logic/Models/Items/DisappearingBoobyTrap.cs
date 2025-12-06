@@ -1,18 +1,14 @@
-﻿namespace TempleOfDoom.Logic.Models.Items;
+﻿using TempleOfDoom.Logic.Models.Entities;
 
-public class DisappearingBoobyTrap : IItem
+namespace TempleOfDoom.Logic.Models.Items;
+
+public class DisappearingBoobyTrap : BaseItem
 {
     public int Damage { get; init; }
-    public int XPos { get; set; }
-    public int YPos { get; set; }
-    public bool IsLootable => false;
 
-    // TODO: Use Observer pattern to Notify the game that the item should be removed instead of current implementation
-    public bool ShouldBeRemoved { get; private set; }
-
-    public void Interact(Player player)
+    public override void Interact(Player player)
     {
         player.TakeDamage(Damage);
-        ShouldBeRemoved = true;
+        NotifyDepleted();
     }
 }

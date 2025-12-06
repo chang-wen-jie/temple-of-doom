@@ -1,8 +1,10 @@
 using CODE_TempleOfDoom_DownloadableContent;
 using TempleOfDoom.Logic.Constants;
-using TempleOfDoom.Logic.Models;
 using TempleOfDoom.Logic.Models.Doors;
+using TempleOfDoom.Logic.Models.Entities;
+using TempleOfDoom.Logic.Models.Interfaces;
 using TempleOfDoom.Logic.Models.Items;
+using TempleOfDoom.Logic.Models.Level;
 using TempleOfDoom.UI.Constants;
 
 namespace TempleOfDoom.UI.Rendering;
@@ -22,6 +24,7 @@ public static class GridBuilder
         return grid;
     }
 
+    // Kamerrooster-/objecten bouwen
     private static char[,] InitializeGrid(Room room)
     {
         var grid = new char[room.Height, room.Width];

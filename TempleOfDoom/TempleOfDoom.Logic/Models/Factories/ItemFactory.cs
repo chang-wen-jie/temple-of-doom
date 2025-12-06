@@ -1,5 +1,7 @@
 ﻿using TempleOfDoom.Data;
+using TempleOfDoom.Data.DTOs;
 using TempleOfDoom.Logic.Constants;
+using TempleOfDoom.Logic.Models.Interfaces;
 using TempleOfDoom.Logic.Models.Items;
 
 namespace TempleOfDoom.Logic.Models.Factories;

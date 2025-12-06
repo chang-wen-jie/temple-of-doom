@@ -1,6 +1,6 @@
-﻿using TempleOfDoom.Data;
-using TempleOfDoom.Logic;
-using TempleOfDoom.Logic.Models.Factories;
+﻿using TempleOfDoom.Data.Factories;
+using TempleOfDoom.Data.Loaders;
+using TempleOfDoom.Logic.Core;
 using TempleOfDoom.UI.Inputs;
 using TempleOfDoom.UI.Rendering;
 
@@ -8,6 +8,7 @@ namespace TempleOfDoom.ConsoleApp;
 
 internal static class Program
 {
+    // Kopie van bestand want program laadt alleen vanuit eigen map
     private const string LevelFileName = "GameData.json";
 
     private static void Main()
@@ -24,14 +25,13 @@ internal static class Program
 
     private static void RunGame()
     {
+        // Bestand op basis van extensie doorwijzen
         var strategy = LevelStrategyFactory.GetStrategy(LevelFileName);
-
         var dataLoader = new LevelLoader(strategy);
         var levelDto = dataLoader.LoadLevel(LevelFileName);
-
         var level = LevelMapper.MapToLevel(levelDto);
         var gameManager = new GameManager(level);
-
+        
         while (!gameManager.IsGameOver)
         {
             var currentRoom = gameManager.GetCurrentRoom();

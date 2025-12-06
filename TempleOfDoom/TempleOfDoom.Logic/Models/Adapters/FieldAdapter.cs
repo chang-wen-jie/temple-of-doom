@@ -1,7 +1,9 @@
 using CODE_TempleOfDoom_DownloadableContent;
+using TempleOfDoom.Logic.Models.Level;
 
-namespace TempleOfDoom.Logic.Models;
+namespace TempleOfDoom.Logic.Models.Adapters;
 
+// Brug leggen tussen methoden van kamer en vijand
 public class FieldAdapter(Room room, int x, int y) : IField
 {
     public IField GetNeighbour(int direction)
@@ -26,7 +28,7 @@ public class FieldAdapter(Room room, int x, int y) : IField
 
     public IPlacable? Item
     {
-        get => room.GetItem(x, y);
-        set => room.SetItem(x, y, value);
+        get => room.GetPlacable(x, y);
+        set => room.SetPlacable(x, y, value);
     }
 }

@@ -1,5 +1,6 @@
 using CODE_TempleOfDoom_DownloadableContent;
-using TempleOfDoom.Logic.Models;
+using TempleOfDoom.Logic.Models.Entities;
+using TempleOfDoom.Logic.Models.Level;
 
 namespace TempleOfDoom.Logic.Controllers;
 
@@ -34,10 +35,10 @@ public static class EnemyController
 
             var (enemyOldX, enemyOldY) = oldPos;
             var sameTile = player.X == enemyNewX && player.Y == enemyNewY;
-            var swapped = player.X == enemyOldX && player.Y == enemyOldY && enemyNewX == playerOldX &&
+            var swappedTiles = player.X == enemyOldX && player.Y == enemyOldY && enemyNewX == playerOldX &&
                           enemyNewY == playerOldY;
 
-            if (sameTile || swapped) player.TakeDamage(1);
+            if (sameTile || swappedTiles) player.TakeDamage(1);
         }
     }
 

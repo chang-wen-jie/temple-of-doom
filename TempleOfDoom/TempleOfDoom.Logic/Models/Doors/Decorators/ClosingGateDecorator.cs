@@ -1,4 +1,4 @@
-﻿namespace TempleOfDoom.Logic.Models.Doors;
+﻿namespace TempleOfDoom.Logic.Models.Doors.Decorators;
 
 public class ClosingGateDecorator(Door wrappee) : Decorator(wrappee)
 {

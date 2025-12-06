@@ -1,15 +1,13 @@
 ﻿using TempleOfDoom.Logic.Events;
+using TempleOfDoom.Logic.Models.Entities;
 
 namespace TempleOfDoom.Logic.Models.Items;
 
-public class PressurePlate : IItem, ISubject
+public class PressurePlate : BaseItem, ISubject
 {
-    public int XPos { get; init; }
-    public int YPos { get; set; }
-    public bool IsLootable => false;
     private readonly List<IObserver> _observers = [];
 
-    public void Interact(Player player)
+    public override void Interact(Player player)
     {
         Notify();
     }

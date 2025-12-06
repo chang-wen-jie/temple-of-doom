@@ -1,6 +1,7 @@
-﻿using TempleOfDoom.Data.Strategies;
+﻿using TempleOfDoom.Data.DTOs;
+using TempleOfDoom.Data.Strategies;
 
-namespace TempleOfDoom.Data;
+namespace TempleOfDoom.Data.Loaders;
 
 public class LevelLoader(ILevelLoadStrategy strategy)
 {

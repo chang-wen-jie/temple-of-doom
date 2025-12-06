@@ -1,4 +1,7 @@
 ﻿using TempleOfDoom.Data;
+using TempleOfDoom.Data.DTOs;
+using TempleOfDoom.Logic.Models.Items;
+using TempleOfDoom.Logic.Models.Level;
 
 namespace TempleOfDoom.Logic.Models.Factories;
 

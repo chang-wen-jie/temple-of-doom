@@ -1,8 +1,12 @@
 ﻿using CODE_TempleOfDoom_DownloadableContent;
+using TempleOfDoom.Logic.Events;
+using TempleOfDoom.Logic.Models.Adapters;
 using TempleOfDoom.Logic.Models.Doors;
+using TempleOfDoom.Logic.Models.Entities;
+using TempleOfDoom.Logic.Models.Interfaces;
 using TempleOfDoom.Logic.Models.Items;
 
-namespace TempleOfDoom.Logic.Models;
+namespace TempleOfDoom.Logic.Models.Level;
 
 public class Room
 {
@@ -23,7 +27,7 @@ public class Room
     public IEnumerable<SpecialFloorTile> SpecialFloorTiles => _specialFloorTiles.AsReadOnly();
 
     private readonly FieldAdapter[,] _fieldGrid;
-    private readonly IPlacable?[,] _itemGrid;
+    private readonly IPlacable?[,] _placableGrid;
 
     public Room(int id, int width, int height)
     {
@@ -34,8 +38,9 @@ public class Room
         Height = height;
 
         _fieldGrid = new FieldAdapter[Height, Width];
-        _itemGrid = new IPlacable?[Height, Width];
+        _placableGrid = new IPlacable?[Height, Width];
 
+        // Kamer vullen met FieldAdapter voor vijandinteracties
         for (var y = 0; y < Height; y++)
         for (var x = 0; x < Width; x++)
             _fieldGrid[y, x] = new FieldAdapter(this, x, y);
@@ -44,6 +49,11 @@ public class Room
     public void AddItem(IItem item)
     {
         _items.Add(item);
+
+        item.OnItemDepleted += (sender, args) =>
+        {
+            if (sender is IItem i) _items.Remove(i);
+        };
     }
 
     public void AddEnemy(ILiving enemy)
@@ -54,6 +64,24 @@ public class Room
     public void AddDoor(Door door)
     {
         _doors.Add(door);
+    }
+    
+    // Subject in kamer met Observer koppelen (zonder kennis over wie wat doet)
+    public void ConnectMechanisms()
+    {
+        var subjects = Items.OfType<ISubject>().ToList();
+        if (subjects.Count == 0) return;
+
+        var observers = Doors.OfType<IObserver>().ToList();
+        if (observers.Count == 0) return;
+
+        foreach (var subject in subjects)
+        {
+            foreach (var observer in observers)
+            {
+                subject.Attach(observer);
+            }
+        }
     }
 
     public void AddSpecialFloorTile(SpecialFloorTile tile)
@@ -75,23 +103,20 @@ public class Room
     {
         var item = Items.FirstOrDefault(i => i.XPos == player.X && i.YPos == player.Y);
 
-        if (item == null) return;
-
-        item.Interact(player);
-
-        if (ShouldRemoveItem(item)) _items.Remove(item);
+        item?.Interact(player);
     }
 
-    public IPlacable? GetItem(int x, int y)
+    public IPlacable? GetPlacable(int x, int y)
     {
-        return IsValidCoordinate(x, y) ? _itemGrid[y, x] : null;
+        return IsValidCoordinate(x, y) ? _placableGrid[y, x] : null;
     }
 
-    public void SetItem(int x, int y, IPlacable? item)
+    public void SetPlacable(int x, int y, IPlacable? item)
     {
-        if (IsValidCoordinate(x, y)) _itemGrid[y, x] = item;
+        if (IsValidCoordinate(x, y)) _placableGrid[y, x] = item;
     }
 
+    // FieldAdapter zelf terugkoppelen
     public FieldAdapter? GetField(int x, int y)
     {
         return IsValidCoordinate(x, y) ? _fieldGrid[y, x] : null;
@@ -102,19 +127,13 @@ public class Room
         return _specialFloorTiles.Any(t => t.X == x && t.Y == y && t.Type == type);
     }
 
-    private static bool ShouldRemoveItem(IItem item)
-    {
-        if (item.IsLootable) return true;
-        return item is DisappearingBoobyTrap { ShouldBeRemoved: true };
-    }
-
     public void RemoveEnemy(ILiving enemy)
     {
         _enemies.Remove(enemy);
 
         if (enemy is not (Enemy e and IPlacable placable)) return;
-        if (GetItem(e.CurrentXLocation, e.CurrentYLocation) == placable)
-            SetItem(e.CurrentXLocation, e.CurrentYLocation, null);
+        if (GetPlacable(e.CurrentXLocation, e.CurrentYLocation) == placable)
+            SetPlacable(e.CurrentXLocation, e.CurrentYLocation, null);
     }
 
     private bool IsValidCoordinate(int x, int y)

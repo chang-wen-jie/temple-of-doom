@@ -1,4 +1,6 @@
-﻿namespace TempleOfDoom.Logic.Models.Doors;
+﻿using TempleOfDoom.Logic.Models.Entities;
+
+namespace TempleOfDoom.Logic.Models.Doors.Decorators;
 
 public class OpenOnOddDecorator(Door wrappee) : Decorator(wrappee)
 {

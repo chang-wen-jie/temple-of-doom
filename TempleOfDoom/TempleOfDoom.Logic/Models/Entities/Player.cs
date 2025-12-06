@@ -1,6 +1,7 @@
-﻿using TempleOfDoom.Logic.Models.Items;
+﻿using TempleOfDoom.Logic.Models.Interfaces;
+using TempleOfDoom.Logic.Models.Items;
 
-namespace TempleOfDoom.Logic.Models;
+namespace TempleOfDoom.Logic.Models.Entities;
 
 public class Player(int roomId, int x, int y, int lives)
 {
@@ -8,14 +9,14 @@ public class Player(int roomId, int x, int y, int lives)
     public int X { get; private set; } = x;
     public int Y { get; private set; } = y;
     public int Lives { get; private set; } = lives;
+
     private readonly List<IItem> _items = [];
     public IEnumerable<IItem> Inventory => _items.AsReadOnly();
 
     public void SetRoom(int roomId, int x, int y)
     {
         CurrentRoomId = roomId;
-        X = x;
-        Y = y;
+        SetPosition(x, y);
     }
 
     public void SetPosition(int x, int y)

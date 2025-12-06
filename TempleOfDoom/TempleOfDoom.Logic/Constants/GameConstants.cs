@@ -1,6 +1,12 @@
 namespace TempleOfDoom.Logic.Constants;
 
-public static class GameConstants
+public static class GameRules
+{
+    public const int WinningStoneCount = 5;
+    public const int LosingLivesCount = 0;
+}
+
+public static class Commands
 {
     public const string Shoot = "shoot";
 }
@@ -15,11 +21,18 @@ public static class Direction
 
 public static class CardinalDirection
 {
-    public const string North = "NORTH";
-    public const string East = "EAST";
-    public const string South = "SOUTH";
-    public const string West = "WEST";
+    public const string North = "north";
+    public const string East = "east";
+    public const string South = "south";
+    public const string West = "west";
 }
+
+public static class RelativeDirection
+{
+    public const string Upper = "upper";
+    public const string Lower = "lower";
+}
+
 
 public static class EnemyDirection
 {

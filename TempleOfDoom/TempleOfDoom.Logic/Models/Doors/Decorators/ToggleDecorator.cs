@@ -1,6 +1,6 @@
 ﻿using TempleOfDoom.Logic.Events;
 
-namespace TempleOfDoom.Logic.Models.Doors;
+namespace TempleOfDoom.Logic.Models.Doors.Decorators;
 
 public class ToggleDecorator(Door wrappee) : Decorator(wrappee), IObserver
 {

@@ -1,14 +1,13 @@
 using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Helpers;
-using TempleOfDoom.Logic.Models;
 using TempleOfDoom.Logic.Models.Doors;
+using TempleOfDoom.Logic.Models.Entities;
+using TempleOfDoom.Logic.Models.Level;
 
 namespace TempleOfDoom.Logic.Controllers;
 
 public class PlayerMovementController(Level level)
 {
-    private readonly Level _level = level;
-
     public void Move(Player player, Room currentRoom, string direction)
     {
         var (nextX, nextY) = DirectionHelper.GetNextPosition(player.X, player.Y, direction);
@@ -29,6 +28,7 @@ public class PlayerMovementController(Level level)
 
     private static void HandleIceSliding(Player player, Room currentRoom, string direction)
     {
+        // Glijden totdat speler op niet-ijs vloer staat
         while (currentRoom.HasSpecialTile(player.X, player.Y, SpecialFloorTilesTypes.Ice))
         {
             var (slideX, slideY) = DirectionHelper.GetNextPosition(player.X, player.Y, direction);
@@ -36,6 +36,7 @@ public class PlayerMovementController(Level level)
             if (!currentRoom.IsWalkable(slideX, slideY)) break;
 
             player.SetPosition(slideX, slideY);
+            // Voorwerpinteractie tijdens het glijden
             currentRoom.OnPlayerEnter(player);
         }
     }
@@ -50,9 +51,12 @@ public class PlayerMovementController(Level level)
 
     private void TransitionToRoom(Player player, Room currentRoom, Door door, string direction)
     {
-        var nextRoom = _level.Rooms.First(r => r.Id == door.TargetRoomId);
+        var nextRoom = level.GetRoom(door.TargetRoomId);
         int newX, newY;
 
+        if (nextRoom == null) return;
+
+        // Speler bovenop deur/ladder laden
         if (door.TwinDoor != null)
         {
             newX = door.TwinDoor.X;
@@ -83,6 +87,7 @@ public class PlayerMovementController(Level level)
             : (nextRoom.Width / 2, nextRoom.Height / 2);
     }
 
+    // Relatieve positie omwisselen met tegenovergestelde kant
     private static (int x, int y) CalculateDoorExit(Player player, Room currentRoom, Room nextRoom, string direction)
     {
         return direction switch

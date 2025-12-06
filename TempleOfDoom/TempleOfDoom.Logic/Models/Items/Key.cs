@@ -1,14 +1,15 @@
-﻿namespace TempleOfDoom.Logic.Models.Items;
+﻿using TempleOfDoom.Logic.Models.Entities;
 
-public class Key : IItem
+namespace TempleOfDoom.Logic.Models.Items;
+
+public class Key : BaseItem
 {
-    public int XPos { get; set; }
-    public int YPos { get; set; }
     public string? Color { get; init; }
-    public bool IsLootable => true;
+    public override bool IsLootable => true;
 
-    public void Interact(Player player)
+    public override void Interact(Player player)
     {
         player.AddItem(this);
+        NotifyDepleted();
     }
 }

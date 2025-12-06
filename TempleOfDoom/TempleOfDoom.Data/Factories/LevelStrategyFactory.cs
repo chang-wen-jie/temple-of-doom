@@ -1,6 +1,6 @@
 using TempleOfDoom.Data.Strategies;
 
-namespace TempleOfDoom.Logic.Models.Factories;
+namespace TempleOfDoom.Data.Factories;
 
 public static class LevelStrategyFactory
 {

@@ -1,6 +1,8 @@
 using CODE_TempleOfDoom_DownloadableContent;
 using TempleOfDoom.Data;
+using TempleOfDoom.Data.DTOs;
 using TempleOfDoom.Logic.Constants;
+using TempleOfDoom.Logic.Models.Level;
 
 namespace TempleOfDoom.Logic.Models.Factories;
 
@@ -31,7 +33,8 @@ public static class EnemyFactory
 
                     baseEnemy.CurrentField = field;
 
-                    if (enemy is IPlacable placableEnemy) room.SetItem(dto.X, dto.Y, placableEnemy);
+                    // Vijand in kamer plaatsen als Item omdat DLL zo is ontworpen
+                    if (enemy is IPlacable placableEnemy) room.SetPlacable(dto.X, dto.Y, placableEnemy);
 
                     break;
                 }

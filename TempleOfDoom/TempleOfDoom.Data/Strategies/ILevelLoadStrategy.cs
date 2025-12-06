@@ -1,4 +1,6 @@
-﻿namespace TempleOfDoom.Data.Strategies;
+﻿using TempleOfDoom.Data.DTOs;
+
+namespace TempleOfDoom.Data.Strategies;
 
 public interface ILevelLoadStrategy
 {

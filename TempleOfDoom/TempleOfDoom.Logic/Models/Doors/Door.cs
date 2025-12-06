@@ -1,13 +1,18 @@
-﻿namespace TempleOfDoom.Logic.Models.Doors;
+﻿using TempleOfDoom.Logic.Models.Entities;
+
+namespace TempleOfDoom.Logic.Models.Doors;
 
 public abstract class Door
 {
-    public int X { get; init; }
-    public int Y { get; init; }
-    public int TargetRoomId { get; init; }
-    public string? DoorType { get; init; }
-    public string? Color { get; init; }
-    public Door? TwinDoor { get; set; }
+    public virtual int X { get; init; }
+    public virtual int Y { get; init; }
+    public virtual int TargetRoomId { get; init; }
+    public virtual string? DoorType { get; init; }
+    public virtual string? Color { get; init; }
+
+    // Staat van deur onthouden
+    public virtual Door? TwinDoor { get; set; }
+
     public abstract bool IsOpen { get; }
     public abstract void Open();
     public abstract void Close();

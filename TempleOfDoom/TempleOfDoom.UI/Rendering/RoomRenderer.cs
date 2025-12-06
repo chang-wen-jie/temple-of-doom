@@ -1,7 +1,9 @@
 using TempleOfDoom.Logic.Constants;
-using TempleOfDoom.Logic.Models;
 using TempleOfDoom.Logic.Models.Doors;
+using TempleOfDoom.Logic.Models.Entities;
+using TempleOfDoom.Logic.Models.Interfaces;
 using TempleOfDoom.Logic.Models.Items;
+using TempleOfDoom.Logic.Models.Level;
 using TempleOfDoom.UI.Constants;
 
 namespace TempleOfDoom.UI.Rendering;
@@ -29,6 +31,7 @@ public static class RoomRenderer
         );
     }
 
+    // Kamerobjecten bekleuren
     private static void RenderGrid(Room room, char[,] grid)
     {
         for (var y = 0; y < grid.GetLength(0); y++)
@@ -93,7 +96,7 @@ public static class RoomRenderer
         var stones = player.Inventory.OfType<SankaraStone>().Count();
 
         Console.WriteLine($"\n{new string(' ', LeftPadding)}Lives: {player.Lives}");
-        Console.WriteLine($"{new string(' ', LeftPadding)}Sankara Stones: {stones}/5");
+        Console.WriteLine($"{new string(' ', LeftPadding)}Sankara Stones: {stones}/{GameRules.WinningStoneCount}");
         Console.WriteLine($"\n{new string(' ', LeftPadding)}Inventory:");
 
         var keys = player.Inventory.OfType<Key>();

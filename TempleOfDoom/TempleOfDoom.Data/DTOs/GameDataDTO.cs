@@ -1,4 +1,4 @@
-﻿namespace TempleOfDoom.Data;
+﻿namespace TempleOfDoom.Data.DTOs;
 
 public class RootObject
 {
@@ -51,7 +51,7 @@ public class ConnectionDto
     public int South { get; set; }
     public DoorDto[]? Doors { get; set; }
     public int West { get; set; }
-    public int EAST { get; set; }
+    public int East { get; set; }
     public int Upper { get; set; }
     public int Lower { get; set; }
     public LadderDto Ladder { get; set; }

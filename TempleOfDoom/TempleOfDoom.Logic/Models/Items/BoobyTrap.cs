@@ -1,13 +1,12 @@
-﻿namespace TempleOfDoom.Logic.Models.Items;
+﻿using TempleOfDoom.Logic.Models.Entities;
 
-public class BoobyTrap : IItem
+namespace TempleOfDoom.Logic.Models.Items;
+
+public class BoobyTrap : BaseItem
 {
     public int Damage { get; init; }
-    public int XPos { get; set; }
-    public int YPos { get; set; }
-    public bool IsLootable => false;
-    
-    public void Interact(Player player)
+
+    public override void Interact(Player player)
     {
         player.TakeDamage(Damage);
     }
