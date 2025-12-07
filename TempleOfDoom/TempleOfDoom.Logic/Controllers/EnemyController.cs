@@ -14,10 +14,9 @@ public static class EnemyController
         {
             oldPositions[enemy] = GetCoordinates(enemy);
 
-            switch (enemy)
+            if (enemy is IMovable movableEnemy)
             {
-                case HorizontallyMovingEnemy hEnemy: hEnemy.Move(); break;
-                case VerticallyMovingEnemy vEnemy: vEnemy.Move(); break;
+                movableEnemy.Move();
             }
         }
 
@@ -81,11 +80,11 @@ public static class EnemyController
 
     private static (int x, int y) GetCoordinates(ILiving enemy)
     {
-        return enemy switch
+        if (enemy is Enemy baseEnemy)
         {
-            HorizontallyMovingEnemy hEnemy => (hEnemy.CurrentXLocation, hEnemy.CurrentYLocation),
-            VerticallyMovingEnemy vEnemy => (vEnemy.CurrentXLocation, vEnemy.CurrentYLocation),
-            _ => (-1, -1)
-        };
+            return (baseEnemy.CurrentXLocation, baseEnemy.CurrentYLocation);
+        }
+    
+        return (-1, -1);
     }
 }

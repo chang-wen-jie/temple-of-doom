@@ -68,14 +68,14 @@ public static class GridBuilder
     {
         foreach (var enemy in room.Enemies)
         {
-            var (x, y) = enemy switch
-            {
-                HorizontallyMovingEnemy h => (h.CurrentXLocation, h.CurrentYLocation),
-                VerticallyMovingEnemy v => (v.CurrentXLocation, v.CurrentYLocation),
-                _ => (-1, -1)
-            };
+            if (enemy is not Enemy baseEnemy) continue;
+            var x = baseEnemy.CurrentXLocation;
+            var y = baseEnemy.CurrentYLocation;
 
-            if (IsValidPosition(x, y, grid)) grid[y, x] = ConsoleSymbols.Enemy;
+            if (IsValidPosition(x, y, grid)) 
+            {
+                grid[y, x] = ConsoleSymbols.Enemy;
+            }
         }
     }
 
