@@ -1,4 +1,5 @@
 using CODE_TempleOfDoom_DownloadableContent;
+using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Models.Entities;
 using TempleOfDoom.Logic.Models.Level;
 
@@ -37,13 +38,12 @@ public static class EnemyController
             var swappedTiles = player.X == enemyOldX && player.Y == enemyOldY && enemyNewX == playerOldX &&
                           enemyNewY == playerOldY;
 
-            if (sameTile || swappedTiles) player.TakeDamage(1);
+            if (sameTile || swappedTiles) player.TakeDamage(Rules.DamageValue);
         }
     }
 
     public static void HandleAttack(Room room, Player player)
     {
-        // Cellen rondom speler constateren
         var attackZones = new List<(int x, int y)>
         {
             (player.X, player.Y - 1),
@@ -59,10 +59,10 @@ public static class EnemyController
             foreach (var (attackZoneX, attackZoneY) in attackZones)
             {
                 if (enemyX != attackZoneX || enemyY != attackZoneY) continue;
-                enemy.DoDamage(1);
+                enemy.DoDamage(Rules.DamageValue);
 
-                // DLL zet CurrentField en vijand (Item) op null; opnieuw toewijzen
-                if (enemy is not Enemy { NumberOfLives: > 0 } survivingEnemy) continue;
+                // DLL zet CurrentField en vijand op null; opnieuw toewijzen
+                if (enemy is not Enemy { NumberOfLives: > Rules.LosingLivesCount } survivingEnemy) continue;
                 var field = room.GetField(enemyX, enemyY);
                 survivingEnemy.CurrentField = field;
 
@@ -73,7 +73,7 @@ public static class EnemyController
 
     public static void RemoveDead(Room room)
     {
-        var deadEnemies = room.Enemies.Where(e => e.NumberOfLives <= 0).ToList();
+        var deadEnemies = room.Enemies.Where(e => e.NumberOfLives <= Rules.LosingLivesCount).ToList();
 
         foreach (var enemy in deadEnemies) room.RemoveEnemy(enemy);
     }

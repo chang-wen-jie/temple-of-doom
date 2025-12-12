@@ -9,8 +9,8 @@ public class GameManager(Level level)
 {
     private readonly PlayerMovementController _playerMovementController = new(level);
 
-    public bool HasWon => level.Player.Inventory.OfType<SankaraStone>().Count() >= GameRules.WinningStoneCount;
-    public bool IsGameOver => level.Player.Lives <= GameRules.LosingLivesCount || HasWon;
+    public bool HasWon => level.Player.Inventory.OfType<SankaraStone>().Count() >= Rules.WinningStoneCount;
+    public bool IsGameOver => level.Player.Lives <= Rules.LosingLivesCount || HasWon;
 
     public void HandlePlayerInput(string command)
     {

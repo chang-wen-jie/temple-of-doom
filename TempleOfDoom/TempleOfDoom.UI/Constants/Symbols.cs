@@ -1,6 +1,6 @@
 namespace TempleOfDoom.UI.Constants;
 
-public static class ConsoleSymbols
+public static class Symbols
 {
     public const char Wall = '#';
     public const char Empty = ' ';
@@ -19,4 +19,12 @@ public static class ConsoleSymbols
     public const char BoobyTrap = 'O';
     public const char DisappearingTrap = '@';
     public const char Ice = '^';
+    public const char Dash = '-';
+    public const char Asterik = '*';
+}
+
+public static class Spacing
+{
+    public const int LeftPadding = 5;
+    public const int SeperatorLength = 50;
 }

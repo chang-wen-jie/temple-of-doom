@@ -10,8 +10,6 @@ namespace TempleOfDoom.UI.Rendering;
 
 public static class RoomRenderer
 {
-    private const int LeftPadding = 5;
-
     public static void RenderRoom(Room room, Player player)
     {
         var grid = GridBuilder.Build(room, player);
@@ -26,17 +24,16 @@ public static class RoomRenderer
     {
         Console.WriteLine(
             "\n" +
-            new string(' ', LeftPadding) + "Welcome to the Temple of Doom!\n" +
-            new string('-', 50) + "\n"
+            new string(Symbols.Empty, Spacing.LeftPadding) + "Welcome to the Temple of Doom!\n" +
+            new string(Symbols.Dash, Spacing.SeperatorLength) + "\n"
         );
     }
 
-    // Kamerobjecten bekleuren
     private static void RenderGrid(Room room, char[,] grid)
     {
         for (var y = 0; y < grid.GetLength(0); y++)
         {
-            Console.Write(new string(' ', LeftPadding));
+            Console.Write(new string(Symbols.Empty, Spacing.LeftPadding));
             for (var x = 0; x < grid.GetLength(1); x++)
             {
                 var symbol = grid[y, x];
@@ -45,7 +42,7 @@ public static class RoomRenderer
                 var item = room.Items.FirstOrDefault(i => i.XPos == x && i.YPos == y);
 
                 SetConsoleColor(symbol, door, item);
-                Console.Write(symbol + " ");
+                Console.Write($"{symbol}{Symbols.Empty}");
             }
 
             Console.WriteLine();
@@ -58,55 +55,35 @@ public static class RoomRenderer
     {
         if (door is { DoorType: DoorTypes.Colored })
         {
-            Console.ForegroundColor = door.Color?.ToLower() switch
-            {
-                GameColors.Red => ConsoleColor.Red,
-                GameColors.Green => ConsoleColor.Green,
-                _ => ConsoleColor.Gray
-            };
+            Console.ForegroundColor = ConsoleColorMapper.GetColor(door.Color);
             return;
         }
 
-        if (item is Key key)
+        if (item is Key key && !string.IsNullOrEmpty(key.Color))
         {
-            Console.ForegroundColor = key.Color?.ToLower() switch
-            {
-                GameColors.Red => ConsoleColor.Red,
-                GameColors.Green => ConsoleColor.Green,
-                _ => ConsoleColor.Gray
-            };
+            Console.ForegroundColor = ConsoleColorMapper.GetColor(key.Color);
             return;
         }
 
-        Console.ForegroundColor = symbol switch
-        {
-            ConsoleSymbols.Player => ConsoleColor.Blue,
-            ConsoleSymbols.Wall => ConsoleColor.Yellow,
-            ConsoleSymbols.SankaraStone => ConsoleColor.DarkYellow,
-            ConsoleSymbols.Key => ConsoleColor.Green,
-            ConsoleSymbols.Enemy => ConsoleColor.Red,
-            ConsoleSymbols.Ice => ConsoleColor.Cyan,
-            ConsoleSymbols.DoorLadder => ConsoleColor.Magenta,
-            _ => ConsoleColor.Gray
-        };
+        Console.ForegroundColor = ConsoleColorMapper.GetColor(symbol);
     }
 
     private static void RenderPlayerStats(Player player)
     {
         var stones = player.Inventory.OfType<SankaraStone>().Count();
 
-        Console.WriteLine($"\n{new string(' ', LeftPadding)}Lives: {player.Lives}");
-        Console.WriteLine($"{new string(' ', LeftPadding)}Sankara Stones: {stones}/{GameRules.WinningStoneCount}");
-        Console.WriteLine($"\n{new string(' ', LeftPadding)}Inventory:");
+        Console.WriteLine($"\n{new string(Symbols.Empty, Spacing.LeftPadding)}Lives: {player.Lives}");
+        Console.WriteLine($"{new string(Symbols.Empty, Spacing.LeftPadding)}Sankara Stones: {stones}/{Rules.WinningStoneCount}");
+        Console.WriteLine($"\n{new string(Symbols.Empty, Spacing.LeftPadding)}Inventory:");
 
         var keys = player.Inventory.OfType<Key>();
-        foreach (var key in keys) Console.WriteLine($"{new string(' ', LeftPadding)}{key.Color} key");
+        foreach (var key in keys) Console.WriteLine($"{new string(Symbols.Empty, Spacing.LeftPadding)}{key.Color} key");
     }
 
     public static void RenderMessage(string message)
     {
-        Console.WriteLine("\n" + new string('*', 50));
-        Console.WriteLine(new string(' ', LeftPadding) + message);
-        Console.WriteLine(new string('*', 50));
+        Console.WriteLine("\n" + new string(Symbols.Asterik, Spacing.SeperatorLength));
+        Console.WriteLine(new string(Symbols.Empty, Spacing.LeftPadding) + message);
+        Console.WriteLine(new string(Symbols.Asterik, Spacing.SeperatorLength));
     }
 }

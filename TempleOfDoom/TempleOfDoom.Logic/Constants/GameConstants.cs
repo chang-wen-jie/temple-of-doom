@@ -1,9 +1,10 @@
 namespace TempleOfDoom.Logic.Constants;
 
-public static class GameRules
+public static class Rules
 {
     public const int WinningStoneCount = 5;
     public const int LosingLivesCount = 0;
+    public const int DamageValue = 1;
 }
 
 public static class Commands
@@ -40,7 +41,7 @@ public static class EnemyDirection
     public const string Vertical = "vertical";
 }
 
-public static class GameColors
+public static class Colors
 {
     public const string Red = "red";
     public const string Green = "green";

@@ -1,5 +1,4 @@
-﻿using TempleOfDoom.Data;
-using TempleOfDoom.Data.DTOs;
+﻿using TempleOfDoom.Data.DTOs;
 using TempleOfDoom.Logic.Constants;
 using TempleOfDoom.Logic.Models.Level;
 
@@ -21,7 +20,6 @@ public static class ConnectionFactory
             { RelativeDirection.Lower, connDto.Lower }
         };
 
-        // Aangrenzende kamers toevoegen aan lijst
         foreach (var (direction, roomId) in directions)
         {
             if (roomId == 0) continue;
@@ -29,7 +27,6 @@ public static class ConnectionFactory
             conn.AddRoomDirection(direction, roomId);
         }
 
-        // Lijst is compleet
         return conn;
     }
 }

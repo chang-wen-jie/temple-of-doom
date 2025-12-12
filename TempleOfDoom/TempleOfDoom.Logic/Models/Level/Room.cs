@@ -4,7 +4,6 @@ using TempleOfDoom.Logic.Models.Adapters;
 using TempleOfDoom.Logic.Models.Doors;
 using TempleOfDoom.Logic.Models.Entities;
 using TempleOfDoom.Logic.Models.Interfaces;
-using TempleOfDoom.Logic.Models.Items;
 
 namespace TempleOfDoom.Logic.Models.Level;
 
@@ -40,7 +39,6 @@ public class Room
         _fieldGrid = new FieldAdapter[Height, Width];
         _placableGrid = new IPlacable?[Height, Width];
 
-        // Kamer vullen met FieldAdapter voor vijandinteracties
         for (var y = 0; y < Height; y++)
         for (var x = 0; x < Width; x++)
             _fieldGrid[y, x] = new FieldAdapter(this, x, y);
@@ -66,7 +64,6 @@ public class Room
         _doors.Add(door);
     }
     
-    // Subject in kamer met Observer koppelen (zonder kennis over wie wat doet)
     public void ConnectMechanisms()
     {
         var subjects = Items.OfType<ISubject>().ToList();
@@ -91,10 +88,8 @@ public class Room
 
     public bool IsWalkable(int x, int y)
     {
-        // Constateer grenzen
         if (x < 0 || x >= Width || y < 0 || y >= Height) return false;
 
-        // Constateer deuren
         var isWall = x == 0 || x == Width - 1 || y == 0 || y == Height - 1;
         return !isWall || Doors.Any(d => d.X == x && d.Y == y);
     }
@@ -116,7 +111,6 @@ public class Room
         if (IsValidCoordinate(x, y)) _placableGrid[y, x] = item;
     }
 
-    // FieldAdapter zelf terugkoppelen
     public FieldAdapter? GetField(int x, int y)
     {
         return IsValidCoordinate(x, y) ? _fieldGrid[y, x] : null;

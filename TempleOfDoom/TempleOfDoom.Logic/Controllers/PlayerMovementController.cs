@@ -28,7 +28,6 @@ public class PlayerMovementController(Level level)
 
     private static void HandleIceSliding(Player player, Room currentRoom, string direction)
     {
-        // Glijden totdat speler op niet-ijs vloer staat
         while (currentRoom.HasSpecialTile(player.X, player.Y, SpecialFloorTilesTypes.Ice))
         {
             var (slideX, slideY) = DirectionHelper.GetNextPosition(player.X, player.Y, direction);
@@ -36,7 +35,6 @@ public class PlayerMovementController(Level level)
             if (!currentRoom.IsWalkable(slideX, slideY)) break;
 
             player.SetPosition(slideX, slideY);
-            // Voorwerpinteractie tijdens het glijden
             currentRoom.OnPlayerEnter(player);
         }
     }
@@ -56,7 +54,6 @@ public class PlayerMovementController(Level level)
 
         if (nextRoom == null) return;
 
-        // Speler bovenop deur/ladder laden
         if (door.TwinDoor != null)
         {
             newX = door.TwinDoor.X;
@@ -87,7 +84,7 @@ public class PlayerMovementController(Level level)
             : (nextRoom.Width / 2, nextRoom.Height / 2);
     }
 
-    // Relatieve positie omwisselen met tegenovergestelde kant
+    // Spelerpositie omwisselen om aan tegenovergestelde kant te spawnen
     private static (int x, int y) CalculateDoorExit(Player player, Room currentRoom, Room nextRoom, string direction)
     {
         return direction switch

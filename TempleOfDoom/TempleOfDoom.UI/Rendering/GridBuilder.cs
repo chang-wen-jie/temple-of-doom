@@ -24,7 +24,6 @@ public static class GridBuilder
         return grid;
     }
 
-    // Kamerrooster-/objecten bouwen
     private static char[,] InitializeGrid(Room room)
     {
         var grid = new char[room.Height, room.Width];
@@ -32,8 +31,8 @@ public static class GridBuilder
         for (var y = 0; y < room.Height; y++)
         for (var x = 0; x < room.Width; x++)
             grid[y, x] = IsRoomBorder(x, y, room.Width, room.Height)
-                ? ConsoleSymbols.Wall
-                : ConsoleSymbols.Empty;
+                ? Symbols.Wall
+                : Symbols.Empty;
 
         return grid;
     }
@@ -44,7 +43,7 @@ public static class GridBuilder
         {
             if (!IsValidPosition(tile.X, tile.Y, grid)) continue;
 
-            if (tile.Type == SpecialFloorTilesTypes.Ice) grid[tile.Y, tile.X] = ConsoleSymbols.Ice;
+            if (tile.Type == SpecialFloorTilesTypes.Ice) grid[tile.Y, tile.X] = Symbols.Ice;
         }
     }
 
@@ -74,27 +73,27 @@ public static class GridBuilder
 
             if (IsValidPosition(x, y, grid)) 
             {
-                grid[y, x] = ConsoleSymbols.Enemy;
+                grid[y, x] = Symbols.Enemy;
             }
         }
     }
 
     private static void AddPlayer(Player player, char[,] grid)
     {
-        if (IsValidPosition(player.X, player.Y, grid)) grid[player.Y, player.X] = ConsoleSymbols.Player;
+        if (IsValidPosition(player.X, player.Y, grid)) grid[player.Y, player.X] = Symbols.Player;
     }
 
     private static char GetDoorSymbol(Door door, bool isHorizontalWall)
     {
         return door.DoorType switch
         {
-            DoorTypes.Colored => isHorizontalWall ? ConsoleSymbols.DoorHorizontal : ConsoleSymbols.DoorVertical,
-            DoorTypes.Toggle => ConsoleSymbols.DoorToggle,
-            DoorTypes.ClosingGate => ConsoleSymbols.DoorClosingGate,
-            DoorTypes.OpenOnStonesInRoom => ConsoleSymbols.DoorOpenOnStonesInRoom,
-            DoorTypes.OpenOnOdd => ConsoleSymbols.DoorOpenOnOdd,
-            DoorTypes.Ladder => ConsoleSymbols.DoorLadder,
-            _ => ConsoleSymbols.Empty
+            DoorTypes.Colored => isHorizontalWall ? Symbols.DoorHorizontal : Symbols.DoorVertical,
+            DoorTypes.Toggle => Symbols.DoorToggle,
+            DoorTypes.ClosingGate => Symbols.DoorClosingGate,
+            DoorTypes.OpenOnStonesInRoom => Symbols.DoorOpenOnStonesInRoom,
+            DoorTypes.OpenOnOdd => Symbols.DoorOpenOnOdd,
+            DoorTypes.Ladder => Symbols.DoorLadder,
+            _ => Symbols.Empty
         };
     }
 
@@ -102,12 +101,12 @@ public static class GridBuilder
     {
         return item switch
         {
-            SankaraStone => ConsoleSymbols.SankaraStone,
-            Key => ConsoleSymbols.Key,
-            PressurePlate => ConsoleSymbols.PressurePlate,
-            BoobyTrap => ConsoleSymbols.BoobyTrap,
-            DisappearingBoobyTrap => ConsoleSymbols.DisappearingTrap,
-            _ => '.'
+            SankaraStone => Symbols.SankaraStone,
+            Key => Symbols.Key,
+            PressurePlate => Symbols.PressurePlate,
+            BoobyTrap => Symbols.BoobyTrap,
+            DisappearingBoobyTrap => Symbols.DisappearingTrap,
+            _ => Symbols.Empty
         };
     }
 

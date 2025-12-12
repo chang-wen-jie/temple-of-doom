@@ -32,7 +32,6 @@ public static class EnemyFactory
 
                     baseEnemy.CurrentField = field;
 
-                    // Vijand in kamer plaatsen als Item (voor DLL)
                     if (enemy is IPlacable placableEnemy) room.SetPlacable(dto.X, dto.Y, placableEnemy);
 
                     break;
